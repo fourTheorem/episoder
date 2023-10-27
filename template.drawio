@@ -1,0 +1,73 @@
+<mxfile host="65bd71144e" pages="2">
+    <diagram id="diagramid" name="Diagram">
+        <mxGraphModel dx="1600" dy="739" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="#ffffff" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="EpisoderMachine&lt;br&gt;Step Function" style="outlineConnect=0;fontColor=#333333;gradientColor=#F34482;gradientDirection=north;fillColor=#BC1356;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.step_functions;" parent="1" vertex="1">
+                    <mxGeometry x="420" y="43.75" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="PullRequestFunction" style="outlineConnect=0;fontColor=#1A1A1A;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" parent="1" vertex="1">
+                    <mxGeometry x="590" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" style="edgeStyle=orthogonalEdgeStyle;curved=1;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontColor=#1A1A1A;" parent="1" source="4" target="15" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="SummaryFunction" style="outlineConnect=0;fontColor=#1A1A1A;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" parent="1" vertex="1">
+                    <mxGeometry x="590" y="220" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="S3 EventBridge Rule" style="outlineConnect=0;fontColor=#333333;gradientColor=#F34482;gradientDirection=north;fillColor=#BC1356;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.eventbridge;" parent="1" vertex="1">
+                    <mxGeometry x="280" y="43.75" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="TranscriptS3EventRuleRole" style="outlineConnect=0;fontColor=#333333;gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.role;" parent="1" vertex="1">
+                    <mxGeometry x="280" y="190" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="Lambda Layer&lt;br&gt;with Git" style="outlineConnect=0;gradientDirection=north;fillColor=#ffe6cc;strokeColor=#d79b00;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" parent="1" vertex="1">
+                    <mxGeometry x="930" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="SSM parameter &lt;br&gt;episoder/githubusercredentials" style="outlineConnect=0;gradientDirection=north;fillColor=#f8cecc;strokeColor=#b85450;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ssm;" parent="1" vertex="1">
+                    <mxGeometry x="870" y="130" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="PullRequestFunction|EpisoderMachine" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=none;fontColor=#EA6B66;orthogonal=1;curved=1;" parent="1" source="2" target="3" edge="1">
+                    <mxGeometry x="0.1798" y="-20" relative="1" as="geometry">
+                        <mxPoint x="-20" y="-20" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="SummaryFunction|EpisoderMachine" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=none;fontColor=#EA6B66;orthogonal=1;curved=1;" parent="1" source="2" target="4" edge="1">
+                    <mxGeometry x="0.0027" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="lambda  553035198032&#10;8|PullRequestFunction" value="Layers" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=none;fontColor=#EA6B66;orthogonal=1;curved=1;" parent="1" source="3" target="7" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ssm  &#10;parameter/podwhisperer/githubusercredentials|PullRequestFunction" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=none;fontColor=#EA6B66;orthogonal=1;curved=1;" parent="1" source="3" target="8" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="EpisoderMachine|TranscriptS3EventRule" value="Arn" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=none;fontColor=#EA6B66;orthogonal=1;curved=1;" parent="1" source="5" target="2" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="TranscriptS3EventRuleRole|TranscriptS3EventRule" value="RoleArn" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=none;fontColor=#EA6B66;orthogonal=1;curved=1;" parent="1" source="5" target="6" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="EpisoderMachine|TranscriptS3EventRuleRole" value="PolicyDocument" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=none;fontColor=#EA6B66;orthogonal=1;curved=1;" parent="1" source="6" target="2" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" style="edgeStyle=orthogonalEdgeStyle;curved=1;html=1;fontColor=#333333;" parent="1" source="10" target="5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="&quot;transcript&lt;br&gt;created&quot;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#1A1A1A;" parent="11" vertex="1" connectable="0">
+                    <mxGeometry x="-0.0936" y="-3" relative="1" as="geometry">
+                        <mxPoint x="-1" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="10" value="" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#3F8624;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.bucket_with_objects;" parent="1" vertex="1">
+                    <mxGeometry x="110" y="43.75" width="46.15" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="Amazon&#10;Bedrock" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=data:image/png,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;" parent="1" vertex="1">
+                    <mxGeometry x="740" y="220" width="50" height="50" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
