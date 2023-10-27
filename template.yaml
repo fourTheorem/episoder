@@ -81,7 +81,7 @@ Resources:
             - Effect: Allow
               Action:
                 - ssm:GetParameter*
-              Resource: !Sub arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/podwhisperer/gitHubUserCredentials
+              Resource: !Sub arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/episoder/gitHubUserCredentials
       Architectures:
         - x86_64
     Metadata:
