@@ -42,6 +42,8 @@ This script uses Bedrock so you must have AWS credentials for an account set up.
 ./bin/summarise.ts ./sample-transcripts/aws-bites-101.json 
 ```
 
+To tweak the prompt, edit [lib/prompt-template.ts](./lib/prompt-template.ts).
+
 ## Deployment
 
 Using AWS SAM:
