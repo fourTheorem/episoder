@@ -22,6 +22,17 @@ Parameters:
       - eu-central-1
       - ap-northeast-1
       - ap-southeast-1
+  GitUserEmail:
+    Description: Email address for Git commits
+    Type: String
+    Default: automation@example.com
+  GitUserName:
+    Description: User full name for Git commits
+    Type: String
+    Default: Transcription Automation
+  GitRepoUrl: 
+    Description: Git repository HTTPS URL
+    Type: String
 
 Globals:
   Function:
@@ -60,9 +71,9 @@ Resources:
           BUCKET_NAME: !Ref BucketName
           POWERTOOLS_SERVICE_NAME: PullRequest
           HOME: /tmp
-          GIT_USER_EMAIL: automation@awsbites.com
-          GIT_USER_NAME: Transcription Automation
-          GIT_REPO_URL: https://github.com/awsbites/aws-bites-site.git
+          GIT_USER_EMAIL: !Ref GitUserEmail
+          GIT_USER_NAME: !Ref GitUserName
+          GIT_REPO_URL: !Ref GitRepoUrl
       Policies:
         - S3CrudPolicy:
             BucketName: !Ref BucketName
