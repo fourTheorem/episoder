@@ -12,7 +12,7 @@ import { logger, middify } from '../lib/lambda-common'
 import { getS3JSON } from '../lib/utils'
 import { createPullRequestDescription } from './pr-description'
 
-const GIT_HUB_CREDENTIALS_SSM_PARAMETER = '/podwhisperer/gitHubUserCredentials'
+const GIT_HUB_CREDENTIALS_SSM_PARAMETER = '/episoder/gitHubUserCredentials'
 
 const { BUCKET_NAME, GIT_REPO_URL, GIT_USER_EMAIL, GIT_USER_NAME } = envs
 const { TARGET_BRANCH } = process.env
