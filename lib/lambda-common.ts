@@ -11,11 +11,11 @@ export const metrics = new Metrics()
 
 /**
  * Create a wrapped Lambda Function handler with injected powertools logger, tracer and metrics
- * 
+ *
  * @param handler The undecorated Lambda Function handler
  * @returns A 'middified' handler
  */
-export const middify = (handler: Handler) => {
+export const middify = (handler: Handler): Handler => {
   return middy(handler)
     .use(injectLambdaContext(logger, { logEvent: true }))
     .use(logMetrics(metrics))

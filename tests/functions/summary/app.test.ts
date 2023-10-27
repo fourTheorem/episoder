@@ -1,89 +1,59 @@
 import { Readable } from 'stream'
 import { mockClient } from 'aws-sdk-client-mock'
-import { sdkStreamMixin, Uint8ArrayBlobAdapter } from '@smithy/util-stream'
-import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime'
+import { sdkStreamMixin } from '@smithy/util-stream'
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
-import { test, assert } from 'vitest'
+import { test, assert, vi, Mock } from 'vitest'
 
 import { handleEvent } from '../../../functions/summary/app'
+import { createSummary } from '../../../lib/summarisation'
+import { fakeLambdaContext } from '../../utils/fake-lambda-context'
 
 const mockS3 = mockClient(S3Client)
-const mockBedrockRuntime = mockClient(BedrockRuntimeClient)
+
+vi.mock('../../../lib/summarisation', () => {
+  const createSummary = vi.fn()
+  return {
+    createSummary
+  }
+})
 
 const testTranscript = {
-  'speakers': { 'spk_0': 'Eoin', 'spk_1': 'Luciano' },
-  'segments': [{
-    'speakerLabel': 'spk_0',
-    'start': 0,
-    'end': 3.66,
-    'text': ' We recently had a use case for creating and publishing a public Lambda function'
-  },
-  {
-    'speakerLabel': 'spk_0',
-    'start': 3.8200000000000003,
-    'end': 6.32,
-    'text': ' so other AWS users could make use of it.'
-  },
-  {
-    'speakerLabel': 'spk_0',
-    'start': 6.5,
-    'end': 8.22,
-    'text': ' This gave us an interesting challenge.'
-  },
-  {
-    'speakerLabel': 'spk_0',
-    'start': 8.4,
-    'end': 12.06,
-    'text': ' This is the end.'
+  speakers: { spk_0: 'Eoin', spk_1: 'Luciano' },
+  segments: [{
+    speakerLabel: 'spk_0',
+    start: 0,
+    end: 3.66,
+    text: ' We recently had a use case for creating and publishing a public Lambda function'
   }]
 }
 
-test(`summary Lambda function extracts summary from the LLM completion`, async () => {
+const testSummary = {
+  episodeSummary: 'We discuss the options for publishing reusable AWS resources like Lambda functions. They cover approaches like GitHub, Serverless Application Repository, Terraform Modules, and more.',
+  chapters: [
+    { start_timestamp: 0, summary: 'Introduction' },
+    { start_timestamp: 1046.38, summary: 'Conclusion and recommendations' }
+  ]
+}
+
+test('summary Lambda function loads transcript and ', async () => {
   const transcriptKey = 'transcripts/999.json'
   const summary = {
-    "episodeSummary": "We discuss the options for publishing reusable AWS resources like Lambda functions. They cover approaches like GitHub, Serverless Application Repository, Terraform Modules, and more.",
-    "chapters": [
-        {"start_timestamp": 0, "summary": "Introduction"},
-        {"start_timestamp": 23.36, "summary": "Describing the use case that led to wanting to publish a Lambda function"}, 
-        {"start_timestamp": 169.14, "summary": "Pros and cons of using the Serverless Application Repository"},
-        {"start_timestamp": 835.4, "summary": "Avoiding data transfer costs with public S3 buckets"},
-        {"start_timestamp": 883.46, "summary": "Challenges using Requester Pays with Lambda"},
-        {"start_timestamp": 945.6, "summary": "Monetizing solutions on the AWS Marketplace"},
-        {"start_timestamp": 1046.38, "summary": "Conclusion and recommendations"}
+    episodeSummary: 'We discuss the options for publishing reusable AWS resources like Lambda functions. They cover approaches like GitHub, Serverless Application Repository, Terraform Modules, and more.',
+    chapters: [
+      { start_timestamp: 0, summary: 'Introduction' },
+      { start_timestamp: 1046.38, summary: 'Conclusion and recommendations' }
     ]
-  } 
+  }
 
   mockS3.on(GetObjectCommand).callsFakeOnce((input) => {
     assert.equal(input.Key, transcriptKey)
-    return { 
+    return {
       Body: sdkStreamMixin(Readable.from(Buffer.from(JSON.stringify(testTranscript))))
     }
-  })
+  });
 
-  mockBedrockRuntime.on(InvokeModelCommand).callsFakeOnce((input) => {
-    assert.ok(input.modelId)
-    assert.ok(input.accept)
-    assert.ok(input.contentType)
-    const parsedBody = JSON.parse(input.body)
-    const { prompt } = parsedBody
-    assert.match(prompt, /^Human: .*\n.*\n.*Assistant:\n$/s)
-    
-    const completion = `
-    Here is the response. I hope you like it
-    
-    ${JSON.stringify(summary)}
+  (createSummary as Mock).mockReturnValueOnce(testSummary)
 
-    Done!`
-    const body = Uint8ArrayBlobAdapter.fromString(JSON.stringify({
-      completion,
-      stop_reason: 'stop_sequence'
-    }))
-
-    return {
-      body
-    }
-  })
-
-  const result = await handleEvent({ transcriptKey })
+  const result = await handleEvent({ transcriptKey }, fakeLambdaContext)
   assert.deepEqual(result.summary, summary)
 })

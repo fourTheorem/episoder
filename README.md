@@ -33,6 +33,15 @@ _(Source for this diagram is in `template.drawio` in [this directory](./))_
 |-- |-- |-- |
 |`/episoder/gitHubUserCredentials` | Personal Access Token (PAT) for the GitHub repository | `username:github_pat_123AB...xyz` |
 
+## Prompt Engineering
+
+To test changes to the LLM prompt, you don't have to deploy. You can run [summarise.ts](./bin/summarise.ts) with a path to a JSON transcript file. A sample transcript is provided.
+This script uses Bedrock so you must have AWS credentials for an account set up.
+
+```bash
+./bin/summarise.ts ./sample-transcripts/aws-bites-101.json 
+```
+
 ## Deployment
 
 Using AWS SAM:

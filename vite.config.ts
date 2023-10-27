@@ -12,10 +12,10 @@ export default defineConfig({
       reporter: ['text', 'html', 'lcov'],
       exclude: [
         ...defaultExclude,
-        '**/*.test.ts',
+        'tests/**',
         '*/mock-utils/**'
       ]
     },
     testTimeout: Number(process.env.TEST_TIMEOUT ?? 5000)
-  },
+  }
 })

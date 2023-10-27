@@ -39,7 +39,8 @@ test('PR description is correctly generated', async () => {
       startTimestamp: 2999.123,
       summary: 'Conclusion and desperate appeal for more subscribers'
     }
-  ]}
+    ]
+  }
 
   const markdown = createPullRequestDescription(summary)
   assert.equal(markdown, `

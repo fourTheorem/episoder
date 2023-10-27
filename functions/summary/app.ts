@@ -1,77 +1,41 @@
 import path from 'node:path'
 import { S3Client } from '@aws-sdk/client-s3'
+import { MetricUnits } from '@aws-lambda-powertools/metrics'
 
-import envs from '../lib/envs'
-import { logger, middify } from '../lib/lambda-common'
-import { getS3JSON } from '../lib/utils'
-import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime'
-
-const MODEL_ID = 'anthropic.claude-v2'
+import envs from '../../lib/envs'
+import { logger, metrics, middify, tracer } from '../../lib/lambda-common'
+import { getS3JSON } from '../../lib/utils'
+import { createSummary } from '../../lib/summarisation'
+import { Summary, Transcript } from '../../lib/types'
 
 const { BUCKET_NAME } = envs
 
 const s3Client = new S3Client({})
-const brClient = new BedrockRuntimeClient({ region: envs.BEDROCK_REGION })
 
-type SummarisationEvent = {
+interface SummarisationEvent {
   transcriptKey: string
 }
 
+interface SummarisationResponse {
+  summary: Summary
+}
 /**
  * Lambda Function handler to create an episode summary and chapters from a transcript
  */
-export const handleEvent = middify(async (event: SummarisationEvent) => {
+export const handleEvent = middify(async (event: SummarisationEvent): Promise<SummarisationResponse> => {
   const { transcriptKey } = event
   const id = path.basename(event.transcriptKey).split('.')[0]
+  tracer.putAnnotation('id', id)
+  tracer.putMetadata('transcriptKey', transcriptKey)
 
   logger.info('Summarising transcript', { id, transcriptKey })
-  const transcript = await getS3JSON(s3Client, BUCKET_NAME, event.transcriptKey)
-
-  const prompt = `Human: Please provide a friendly, positive episode summary (first-person plural and at least 120 words),
-  followed by at least 10 chapter summaries for the following podcast transcript JSON.
-  The transcript segments have start and end time in floating point seconds.
-  Include these timestamps taken exactly from the segments.
-  The chapter summaries should not include the speaker names.
-  The results should be provided as JSON with an episodeSummary property and a chapters property, which 
-  is an array of objects with properties "summary" and "startTimestamp".
-
-  For example, {
-      "episodeSummary": "...",
-      "chapters": [
-          {{"startTimestamp": 0, "summary": "Introduction"}},
-          {{"startTimestamp": 23.4, "summary": "Pros and cons of CloudTrail vs. third-party solutions"}},
-          {{"startTimestamp": 69.1, "summary": "Using CloudTrail with Athena"}}
-      ]
-  }
-  ${JSON.stringify(transcript)}
-  
-  Assistant:
-`
-  const modelInput = JSON.stringify({
-    prompt: prompt,
-    max_tokens_to_sample: 5000,
-    temperature: 0.5,
-    top_k: 250,
-    top_p: 1,
-    stop_sequences: []
-  })
-
-  const invokeModelCommand = new InvokeModelCommand({
-    body: modelInput,
-    modelId: MODEL_ID,
-    accept: 'application/json',
-    contentType: 'application/json'
-  })
-
-  const modelResponse = await brClient.send(invokeModelCommand)
-  const { completion } = JSON.parse(modelResponse.body.transformToString('utf8'))
-  const jsonStart = completion.indexOf('{')
-  const jsonEnd = completion.lastIndexOf('}')
-  const jsonPart = completion.substring(jsonStart, jsonEnd + 1)
-  const summary = JSON.parse(jsonPart)
+  const transcript: Transcript = await getS3JSON(s3Client, BUCKET_NAME, event.transcriptKey)
+  metrics.addMetric('SegmentCount', MetricUnits.Count, transcript.segments.length)
+  const summary = await createSummary(transcript)
+  metrics.addMetric('EpisodeSummaryLength', MetricUnits.Count, summary.episodeSummary.length)
+  metrics.addMetric('ChapterCount', MetricUnits.Count, summary.chapters.length)
 
   return {
     summary
   }
-  
 })

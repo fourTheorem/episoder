@@ -6,10 +6,10 @@ import { SSMClient, GetParameterCommand } from '@aws-sdk/client-ssm'
 import { S3Client } from '@aws-sdk/client-s3'
 import { Octokit } from 'octokit'
 
-import envs from '../lib/envs'
-import type { Summary } from '../lib/types'
-import { logger, middify } from '../lib/lambda-common'
-import { getS3JSON } from '../lib/utils'
+import envs from '../../lib/envs'
+import type { Summary } from '../../lib/types'
+import { logger, middify } from '../../lib/lambda-common'
+import { getS3JSON } from '../../lib/utils'
 import { createPullRequestDescription } from './pr-description'
 
 const GIT_HUB_CREDENTIALS_SSM_PARAMETER = '/episoder/gitHubUserCredentials'
@@ -26,7 +26,7 @@ const gitHubUserCredentialsPromise = ssmClient.send(new GetParameterCommand({
   WithDecryption: true
 }))
 
-type PullRequestEvent = {
+interface PullRequestEvent {
   transcriptKey: string
   summary: Summary
 }
@@ -34,18 +34,18 @@ type PullRequestEvent = {
 /**
  * Lambda Function handler to create a GitHub Pull Request against a configured repository with the contents of a transcript
  * retrieved from S3. The process:
- * 
+ *
  * - Clones the Git repository
  * - Creates a branch and adds the transcript in a new commit
  * - Creates a GitHub Pull Request against the main branch
  * - Returns the GitHub PR URL
- * 
+ *
  * This function requires a GitHub Personal Access Token, preferably a fine-grained token. It should be stored with the username
  * in a SSM SecureString Parameter `/podwhisperer/gitHubUserCredentials` in the format <Username>:<GitHubPersonalAccessToken>
  */
 export const handleEvent = middify(async (event: PullRequestEvent) => {
   const transcript = await getS3JSON(s3Client, BUCKET_NAME, event.transcriptKey)
-  const id = path.basename(event.transcriptKey).split('.')[0]
+  const id: string = path.basename(event.transcriptKey).split('.')[0]
 
   const tmpDir = await mkdtemp(path.join(tmpdir(), 'pr-'))
   logger.info('Using temporary directory', { tmpDir })
@@ -54,11 +54,11 @@ export const handleEvent = middify(async (event: PullRequestEvent) => {
 
     const branchName = `ep-${id}-transcript-${ts}`
     const gitHubUserCredentials = (await gitHubUserCredentialsPromise).Parameter?.Value
-    if (!gitHubUserCredentials) {
+    if (typeof gitHubUserCredentials !== 'string') {
       throw new Error('No gitHubUserCredentials found')
     }
     const [username, password] = gitHubUserCredentials.split(':')
-    if (!username || !password) {
+    if (username === undefined || password === undefined || username === '' || password === '') {
       throw new Error(`${GIT_HUB_CREDENTIALS_SSM_PARAMETER} SSM Parameter should be in the format <Username>:<GitHubPersonalAccessToken>`)
     }
 
@@ -72,7 +72,7 @@ export const handleEvent = middify(async (event: PullRequestEvent) => {
       .addConfig('user.name', GIT_USER_NAME, true, 'global')
       .addConfig('credential.helper', 'cache 900', true, 'global')
 
-    const repoName = path.basename(gitUrl.pathname).split('.')[0]
+    const repoName: string = path.basename(gitUrl.pathname).split('.')[0]
     logger.info('Cloning', { tmpDir, localPath: repoName, url: GIT_REPO_URL })
     await git.clone(gitUrl.toString(), repoName)
 
@@ -94,16 +94,16 @@ export const handleEvent = middify(async (event: PullRequestEvent) => {
     const octokit = new Octokit({ auth: password })
     const body = createPullRequestDescription(event.summary)
     const head = branchName
-    const base = TARGET_BRANCH || 'main'
+    const base = TARGET_BRANCH === undefined ? 'main' : TARGET_BRANCH
     const repoPath = gitUrl.pathname
-    const [, owner,] = repoPath.split('/')
+    const [, owner] = repoPath.split('/')
     const response = await octokit.request(
-      `POST /repos/${owner}/${repoName}/pulls`, { owner,title, body, head, base, repo: repoName }
+      `POST /repos/${owner}/${repoName}/pulls`, { owner, title, body, head, base, repo: repoName }
     )
     const prUrl = response.data.html_url
     console.log('Created PR', { prUrl })
     return { prUrl }
   } finally {
-    rm(tmpDir, { recursive: true })
+    await rm(tmpDir, { recursive: true })
   }
 })
