@@ -1,13 +1,11 @@
 import { Readable } from 'stream'
 import { mockClient } from 'aws-sdk-client-mock'
-import { sdkStreamMixin } from '@aws-sdk/util-stream-node'
+import { sdkStreamMixin, Uint8ArrayBlobAdapter } from '@smithy/util-stream'
 import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime'
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
 import { test, assert } from 'vitest'
 
-process.env.BUCKET_NAME = 'test-bucket'
 import { handleEvent } from '../../../functions/summary/app'
-import { Uint8ArrayBlobAdapter } from '@smithy/util-stream'
 
 const mockS3 = mockClient(S3Client)
 const mockBedrockRuntime = mockClient(BedrockRuntimeClient)
