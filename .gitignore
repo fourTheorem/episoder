@@ -202,5 +202,6 @@ $RECYCLE.BIN/
 
 *.sw?
 *.js
+!.eslintrc.js
 *.js.map
 samconfig.toml
