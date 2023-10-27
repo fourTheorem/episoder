@@ -1,6 +1,6 @@
 process.env.EXAMPLE_KEY_1 = 'test'
 
-import envs from '../envs'
+import envs from '../../../functions/lib/envs'
 import { test, assert } from 'vitest'
 
 test('envs retrieves environment variables if available', async () => {
