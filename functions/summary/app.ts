@@ -27,11 +27,11 @@ export const handleEvent = middify(async (event: SummarisationEvent) => {
   logger.info('Summarising transcript', { id, transcriptKey })
   const transcript = await getS3JSON(s3Client, BUCKET_NAME, event.transcriptKey)
 
-  const prompt = `Human: Please provide a friendly, positive episode summary (first-person plural, approx. 150 words),
-  followed by 10-20 chapter summaries for the following podcast transcript JSON.
+  const prompt = `Human: Please provide a friendly, positive episode summary (first-person plural and at least 120 words),
+  followed by at least 10 chapter summaries for the following podcast transcript JSON.
   The transcript segments have start and end time in floating point seconds.
   Include these timestamps taken exactly from the segments.
-  The chapter summaries should be brief and not include the speaker names.
+  The chapter summaries should not include the speaker names.
   The results should be provided as JSON with an episodeSummary property and a chapters property, which 
   is an array of objects with properties "summary" and "startTimestamp".
 
