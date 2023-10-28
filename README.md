@@ -59,3 +59,17 @@ You will be prompted for:
 - The HTTPS URL of your website GitHub repository, e.g., `https://github.com/awsbites/aws-bites-site.git`
 
 Once deployment has completed, you can check the Step Function that orchestrates the whole process in the AWS Console. This state machine is automatically executed when transcripts are placed in the `processed-transcripts/` prefix.
+
+## Price Monitoring
+
+Bedrock pricing can be difficult to estimate. This repo comes with a pricing CloudWatch dashboard that helps to show the cost for a given period and the relationship between invocations, input tokens and output tokens. This is calculated based on published on-demand pricing for the ClaudeV2 model as of 28 October 2023. A CloudWatch alarm is also created for the total cost per hour, defaulting to breach when the cost exceeds $1 per hour for three consecutive hours.
+
+![Pricing Dashboard](./price-monitor/price-dashboard.png)
+
+The pricing dashboard can be deployed with CDK:
+
+```bash
+cd price-monitor
+npm install
+npx cdk deploy -c bedrockRegion=us-east-1
+```
