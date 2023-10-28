@@ -53,8 +53,8 @@ sam deploy --guided
 ```
 
 You will be prompted for:
-- the S3 Bucket where transcripts are expected to arrive
-- the region to use for Bedrock, since Bedrock is currently only available in a limited number of regions
+- The S3 Bucket where transcripts are expected to arrive
+- The region to use for Bedrock, since Bedrock is currently only available in a limited number of regions
 - The email address and name to use for Git commits
 - The HTTPS URL of your website GitHub repository, e.g., `https://github.com/awsbites/aws-bites-site.git`
 
