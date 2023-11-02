@@ -32,19 +32,12 @@ const testSummary = {
   chapters: [
     { start_timestamp: 0, summary: 'Introduction' },
     { start_timestamp: 1046.38, summary: 'Conclusion and recommendations' }
-  ]
+  ],
+  tags: ['AWS', 'Stuff', 'Things']
 }
 
 test('summary Lambda function loads transcript and ', async () => {
   const transcriptKey = 'transcripts/999.json'
-  const summary = {
-    episodeSummary: 'We discuss the options for publishing reusable AWS resources like Lambda functions. They cover approaches like GitHub, Serverless Application Repository, Terraform Modules, and more.',
-    chapters: [
-      { start_timestamp: 0, summary: 'Introduction' },
-      { start_timestamp: 1046.38, summary: 'Conclusion and recommendations' }
-    ]
-  }
-
   mockS3.on(GetObjectCommand).callsFakeOnce((input) => {
     assert.equal(input.Key, transcriptKey)
     return {
@@ -55,5 +48,5 @@ test('summary Lambda function loads transcript and ', async () => {
   (createSummary as Mock).mockReturnValueOnce(testSummary)
 
   const result = await handleEvent({ transcriptKey }, fakeLambdaContext)
-  assert.deepEqual(result.summary, summary)
+  assert.deepEqual(result.summary, testSummary)
 })

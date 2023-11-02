@@ -39,7 +39,8 @@ test('PR description is correctly generated', async () => {
       startTimestamp: 2999.123,
       summary: 'Conclusion and desperate appeal for more subscribers'
     }
-    ]
+    ],
+    tags: ['InfiniDash', 'SpodlgeWrangler', 'CloudFormation', 'Cost Explorer']
   }
 
   const markdown = createPullRequestDescription(summary)
@@ -60,5 +61,11 @@ We hallucinate about topics we don't understand
 06:31 Securing a second mortgage to pay for InfiniDash
 17:10 How to lobby the CloudFormation team for full InfiniDash support
 49:59 Conclusion and desperate appeal for more subscribers
+
+## Suggested Tags
+InfiniDash
+SpodlgeWrangler
+CloudFormation
+Cost Explorer
 `)
 })

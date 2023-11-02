@@ -6,6 +6,7 @@ export interface Chapter {
 export interface Summary {
   episodeSummary: string
   chapters: Chapter[]
+  tags: string[]
 }
 
 export interface TranscriptSegment {

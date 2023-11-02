@@ -5,7 +5,7 @@
     "strictNullChecks": true,
     "alwaysStrict": true,
     "noEmit": true,
-    "moduleResolution": "node",
+    "moduleResolution": "nodenext",
     "resolveJsonModule": true,
     "target": "ESNext",
     "allowSyntheticDefaultImports": true,

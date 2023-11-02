@@ -55,7 +55,7 @@ export class PriceMonitorStack extends cdk.Stack {
       metricName: 'OutputTokenCount',
       region: bedrockRegion,
       statistic: 'Sum',
-      label: 'Input Tokens',
+      label: 'Output Tokens',
       dimensionsMap: {
         ModelId: modelId
       }

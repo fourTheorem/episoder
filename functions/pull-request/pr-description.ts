@@ -35,5 +35,8 @@ ${summary.episodeSummary}
 
 ## Suggested Chapters
 ${ytChapters}
+
+## Suggested Tags
+${summary.tags.join('\n')}
 `
 }
