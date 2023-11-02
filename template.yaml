@@ -1,0 +1,181 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform:
+  - AWS::Serverless-2016-10-31
+  - SlicWatch-v3
+
+Description: >
+  episoder
+
+  Process podcast episode transcripts to create website transcripts
+
+Parameters:
+  BucketName:
+    Description: Name of S3 Bucket used for all input/output in the transcription process
+    Type: String
+  BedrockRegion:
+    Description: Name of the region to be used for Bedrock
+    Default: us-east-1
+    Type: String
+    AllowedValues:
+      - us-east-1
+      - us-west-1
+      - eu-central-1
+      - ap-northeast-1
+      - ap-southeast-1
+  GitUserEmail:
+    Description: Email address for Git commits
+    Type: String
+    Default: automation@example.com
+  GitUserName:
+    Description: User full name for Git commits
+    Type: String
+    Default: Transcription Automation
+  GitRepoUrl: 
+    Description: Git repository HTTPS URL
+    Type: String
+
+Globals:
+  Function:
+    Tracing: Active
+    Environment:
+      Variables:
+        POWERTOOLS_METRICS_NAMESPACE: !Ref AWS::StackName
+
+Resources:
+  EpisoderMachine:
+    Type: AWS::Serverless::StateMachine # More info about State Machine Resource: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-statemachine.html
+    Properties:
+      Tracing:
+        Enabled: true
+      DefinitionUri: statemachine/episoder.asl.json
+      DefinitionSubstitutions:
+        PullRequestFunctionArn: !GetAtt PullRequestFunction.Arn
+        SummaryFunctionArn: !GetAtt SummaryFunction.Arn
+        BucketName: !Ref BucketName
+      Policies:
+      - LambdaInvokePolicy:
+          FunctionName: !Ref PullRequestFunction
+      - LambdaInvokePolicy:
+          FunctionName: !Ref SummaryFunction
+
+  PullRequestFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: app.handleEvent
+      Timeout: 600
+      MemorySize: 1024
+      Runtime: nodejs18.x
+      Layers:
+        - !Sub arn:aws:lambda:${AWS::Region}:553035198032:layer:git-lambda2:8
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref BucketName
+          POWERTOOLS_SERVICE_NAME: PullRequest
+          HOME: /tmp
+          GIT_USER_EMAIL: !Ref GitUserEmail
+          GIT_USER_NAME: !Ref GitUserName
+          GIT_REPO_URL: !Ref GitRepoUrl
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref BucketName
+        - Statement:
+            - Effect: Allow
+              Action:
+                - ssm:GetParameter*
+              Resource: !Sub arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/episoder/gitHubUserCredentials
+      Architectures:
+        - x86_64
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: false
+        Target: es2020
+        Sourcemap: true
+        EntryPoints:
+          - functions/pull-request/app.ts
+
+  SummaryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: app.handleEvent
+      Timeout: 600
+      MemorySize: 1024
+      Runtime: nodejs18.x
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref BucketName
+          BEDROCK_REGION: !Ref BedrockRegion
+          POWERTOOLS_SERVICE_NAME: Summary
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref BucketName
+        - Statement:
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+              Resource:
+                - !Sub 'arn:${AWS::Partition}:bedrock:${BedrockRegion}::foundation-model/anthropic.claude-v2'
+      Architectures:
+        - x86_64
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: false
+        Target: es2020
+        Sourcemap: true
+        EntryPoints:
+          - functions/summary/app.ts
+
+  TranscriptS3EventRule:
+    Type: AWS::Events::Rule
+    Properties:
+      EventBusName: default
+      EventPattern:
+        source:
+          - aws.s3
+        detail-type:
+          - Object Created
+        detail:
+          bucket:
+            name:
+              - !Ref BucketName
+          object:
+            key:
+              - prefix: processed-transcripts/
+
+      Targets:
+        - Arn: !GetAtt EpisoderMachine.Arn
+          Id: s3-eventbridge-to-step-function
+          InputTransformer:
+            InputPathsMap:
+              transcriptKey: $.detail.object.key
+            InputTemplate: '{"transcriptKey": "<transcriptKey>"}'
+          RoleArn: !GetAtt TranscriptS3EventRuleRole.Arn
+
+  TranscriptS3EventRuleRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - events.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: EpisoderRuleS3Access
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: states:StartExecution
+                Resource: !GetAtt EpisoderMachine.Arn
+
+Outputs:
+  StateMachineArn:
+    Description: State machine ARN
+    Value: !Ref EpisoderMachine

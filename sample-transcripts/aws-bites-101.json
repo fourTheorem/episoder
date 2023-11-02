@@ -1,0 +1,2270 @@
+{
+  "speakers": {
+    "spk_0": "Eoin",
+    "spk_1": "Luciano"
+  },
+  "segments": [
+    {
+      "speakerLabel": "spk_0",
+      "start": 0,
+      "end": 3.66,
+      "text": " We recently had a use case for creating and publishing a public Lambda function"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 3.8200000000000003,
+      "end": 6.32,
+      "text": " so other AWS users could make use of it."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 6.5,
+      "end": 8.22,
+      "text": " This gave us an interesting challenge."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 8.4,
+      "end": 12.06,
+      "text": " How do you easily publish a function or indeed any other AWS resource"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 12.22,
+      "end": 14.52,
+      "text": " in a way that is simple for users to adopt,"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 14.700000000000001,
+      "end": 17.62,
+      "text": " but also is secure, cost-friendly and maintainable?"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 18.16,
+      "end": 19.92,
+      "text": " Today, we are going to go through all of the options"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 20.1,
+      "end": 23.2,
+      "text": " and let you know what we recommend if this is something you want to do."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 23.36,
+      "end": 26.86,
+      "text": " My name is Eoin, I'm joined by Luciano, and this is the AWS Bites podcast."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 26.86,
+      "end": 30.86,
+      "text": " AWS Bites is brought to you by fourTheorem, an advanced AWS partner."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 31.02,
+      "end": 34.36,
+      "text": " If you are moving to AWS or need a partner to help you go faster,"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 34.519999999999996,
+      "end": 36.56,
+      "text": " check us out at fourtheorem.com."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 37.56,
+      "end": 39.56,
+      "text": " Luciano, you raised this question recently."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 40.06,
+      "end": 42.36,
+      "text": " Apart from your generosity, what was the rationale"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 42.519999999999996,
+      "end": 45.66,
+      "text": " for thinking about making a Lambda function public in the first place?"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 45.82,
+      "end": 48.120000000000005,
+      "text": " Let me try to describe the specific use case."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 48.28,
+      "end": 52.16,
+      "text": " I wanted to create an all-time high-level version of the Lambda function"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 55.32,
+      "end": 59,
+      "text": " and I wanted to create a specific version of the Lambda function so I wanted to create an OIDC authenticator for API Gateway."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 59.5,
+      "end": 61.62,
+      "text": " And I think in order to really understand"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 61.8,
+      "end": 64.26,
+      "text": " why that's something that could be interesting,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 64.42,
+      "end": 67.8,
+      "text": " we need to remember something that we have been talking about previously"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 67.96000000000001,
+      "end": 70.16,
+      "text": " in another episode and we'll have the link in the show notes"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 70.32,
+      "end": 75.06,
+      "text": " that API Gateway currently has effectively two competing implementations,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 75.22,
+      "end": 76.8,
+      "text": " REST and HTTP."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 76.96000000000001,
+      "end": 79.6,
+      "text": " And these two implementations have different feature sets."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 80.12,
+      "end": 82.4,
+      "text": " And the business use case I was working on"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 82.4,
+      "end": 86.04,
+      "text": " was basically requiring us to have a private API Gateway"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 86.2,
+      "end": 89.4,
+      "text": " so something can be accessible only from a private VPC."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 89.74000000000001,
+      "end": 92.24000000000001,
+      "text": " And also because we are using OIDC tokens,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 92.4,
+      "end": 94.16000000000001,
+      "text": " there needs to be some kind of authorizer"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 94.34,
+      "end": 97.54,
+      "text": " that could verify that the OIDC token received is valid,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 97.80000000000001,
+      "end": 100.16000000000001,
+      "text": " it's related to a specific user with the right permission"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 100.34,
+      "end": 103.34,
+      "text": " before the request is forwarded to the backend."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 103.96000000000001,
+      "end": 107.64000000000001,
+      "text": " Now, the problem is that if you want to use OIDC authorizer"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 108.10000000000001,
+      "end": 111.64000000000001,
+      "text": " with the HTTP version of the API Gateway,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 111.64,
+      "end": 114.1,
+      "text": " there is actually a very nice one already built in,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 114.28,
+      "end": 116.6,
+      "text": " so you just need to configure it, you don't have any extra cost,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 116.78,
+      "end": 118.78,
+      "text": " AWS will take care of everything for you."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 119.78,
+      "end": 122.48,
+      "text": " But if you want to use a private API Gateway,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 122.64,
+      "end": 125.48,
+      "text": " that's only available in the REST version of API Gateway."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 125.78,
+      "end": 131.08,
+      "text": " So this kind of made us forced to choose the REST version,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 131.24,
+      "end": 134.4,
+      "text": " so we didn't have the option to use the built-in OIDC authorizer."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 134.58,
+      "end": 137.84,
+      "text": " So at that point, the only option was we need to build our own custom authorizer,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 138,
+      "end": 140,
+      "text": " which thankfully is something you can do with Lambda,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 140,
+      "end": 142.5,
+      "text": " you can create a Lambda that acts as an authorizer"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 142.66,
+      "end": 144.2,
+      "text": " and give it to API Gateway,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 144.36,
+      "end": 147.66,
+      "text": " so API Gateway is going to call that Lambda to validate the token"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 147.82,
+      "end": 150.2,
+      "text": " and then decide whether to forward the request or not,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 150.36,
+      "end": 152,
+      "text": " depending on the result of that validation."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 152.16,
+      "end": 154.7,
+      "text": " Now, since we have the solution working,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 154.86,
+      "end": 158.2,
+      "text": " and this is apparently a gap that exists in API Gateway,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 158.36,
+      "end": 161.86,
+      "text": " if you're doing private API Gateways and you're forced to use REST,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 162.02,
+      "end": 165.36,
+      "text": " you don't have an OIDC authorizer, we have the solution,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 165.52,
+      "end": 168.02,
+      "text": " and I think it could make sense to make it available to other people"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 168.02,
+      "end": 171.22,
+      "text": " because I think it could be something relatively common in the market"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 171.38000000000002,
+      "end": 173.02,
+      "text": " to have this particular use case."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 173.18,
+      "end": 176.02,
+      "text": " So we were trying to think, okay, if we want to open source it,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 176.18,
+      "end": 179.44,
+      "text": " how do we make it easy for the users to install it?"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 179.62,
+      "end": 181.68,
+      "text": " Ideally, something that is like one-click install"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 181.84,
+      "end": 183.38,
+      "text": " with some minimal configuration,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 183.54000000000002,
+      "end": 185.78,
+      "text": " and the first thing that came to mind was SAR,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 185.94,
+      "end": 187.52,
+      "text": " Serverless Application Repository,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 187.68,
+      "end": 190.52,
+      "text": " so probably our first option to consider."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 190.68,
+      "end": 193.18,
+      "text": " SAR is Serverless Application Repository,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 193.34,
+      "end": 197.18,
+      "text": " and it is basically something that allows you to create infrastructure as code,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 197.18,
+      "end": 200.68,
+      "text": " and you can use CloudFormation or some or something similar,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 200.86,
+      "end": 204.82,
+      "text": " and then you can publish it in this kind of publicly available repository."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 204.98000000000002,
+      "end": 207.98000000000002,
+      "text": " And you have to specify a special resource,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 208.16,
+      "end": 210.82,
+      "text": " which is AWS::ServerlessRepo::Application,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 210.98000000000002,
+      "end": 215.58,
+      "text": " which is the way that you can attach additional metadata to your project,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 215.74,
+      "end": 217.78,
+      "text": " things like description and version,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 217.96,
+      "end": 222.16,
+      "text": " so when people are going to be browsing this catalog of different solutions,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 222.32,
+      "end": 225.62,
+      "text": " they will see exactly what the specific solution is about."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 225.62,
+      "end": 227.12,
+      "text": " You can also use parameters,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 227.3,
+      "end": 229.12,
+      "text": " so every time that you need something configurable,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 229.3,
+      "end": 233.3,
+      "text": " that's one way to expose effectively the option to the users"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 233.46,
+      "end": 235.22,
+      "text": " to provide their own configuration."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 235.38,
+      "end": 236.72,
+      "text": " For example, in our use case,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 236.88,
+      "end": 242.72,
+      "text": " we most likely need to make the token support different token providers."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 242.88,
+      "end": 244.22,
+      "text": " I don't know if you're using Azure ID,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 244.38,
+      "end": 246.26,
+      "text": " you probably want to specify your own tenant,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 246.42000000000002,
+      "end": 248.8,
+      "text": " but you might be using other OIDC providers."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 248.96,
+      "end": 251.06,
+      "text": " And maybe the user also wants to make sure"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 251.22,
+      "end": 253.26,
+      "text": " that the tokens are given for a specific audience,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 253.42000000000002,
+      "end": 255.14000000000001,
+      "text": " so they will need to provide that audience,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 255.14,
+      "end": 257.4,
+      "text": " or maybe they want to validate other token claims,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 257.56,
+      "end": 260.44,
+      "text": " so they need to have a way to specify all these different options,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 260.59999999999997,
+      "end": 263.36,
+      "text": " and parameters can allow us to make that flexible enough."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 263.52,
+      "end": 268.08,
+      "text": " You can also use this approach to make private resources or private solutions,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 268.24,
+      "end": 271.5,
+      "text": " so it's something you might consider to use internally in your own company."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 271.65999999999997,
+      "end": 275.12,
+      "text": " If you have certain things that you think might be useful for other teams"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 275.28,
+      "end": 278.74,
+      "text": " or for other projects, you can just publish them as SAR applications,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 278.91999999999996,
+      "end": 281.62,
+      "text": " and then they will be available inside your AWS account."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 281.8,
+      "end": 284.71999999999997,
+      "text": " So it's not something that you use only for public things,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 284.72,
+      "end": 287.1,
+      "text": " but you can also consider it for private solutions"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 287.26000000000005,
+      "end": 288.6,
+      "text": " that you want to make reusable."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 288.76000000000005,
+      "end": 291.56,
+      "text": " Now, once you have published something on SAR,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 291.72,
+      "end": 296.32000000000005,
+      "text": " other people can install them using the CLI or using infrastructure as code."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 296.48,
+      "end": 298.32000000000005,
+      "text": " The name is Serverless Application Repository,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 298.48,
+      "end": 300.74,
+      "text": " so you might think, okay, this is just for Lambdas, right?"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 300.90000000000003,
+      "end": 302.70000000000005,
+      "text": " This is just for serverless things."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 302.86,
+      "end": 305.20000000000005,
+      "text": " But in reality, because you are effectively writing cloud formation,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 305.36,
+      "end": 308.86,
+      "text": " you can use this approach to specify any cloud formation template,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 309.04,
+      "end": 312.96000000000004,
+      "text": " any resource, so you might also go beyond the scope of serverless application,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 312.96,
+      "end": 314.91999999999996,
+      "text": " if that's something that makes sense for you."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 315.08,
+      "end": 318.79999999999995,
+      "text": " So the idea is more if you want to make bits and pieces"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 318.96,
+      "end": 321.46,
+      "text": " of your infrastructure usable and configurable,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 321.64,
+      "end": 325.26,
+      "text": " that's one way of doing it, regardless of whether it's serverless or not."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 325.44,
+      "end": 329.64,
+      "text": " I think I really like this approach because the user experience is pretty good."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 329.79999999999995,
+      "end": 332.35999999999996,
+      "text": " So you basically can browse this catalog,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 332.52,
+      "end": 333.85999999999996,
+      "text": " you can see all the different solutions."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 334.02,
+      "end": 337.74,
+      "text": " There is some degree of documentation that describes every single solution,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 337.9,
+      "end": 341.78,
+      "text": " and then when you want to install it, it's pretty much almost like one-click approach."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 341.78,
+      "end": 344.15999999999997,
+      "text": " Or it's very seamless the way you do it."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 345.2,
+      "end": 346.61999999999995,
+      "text": " There is one disadvantage, though."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 346.78,
+      "end": 349.61999999999995,
+      "text": " I have been using some of these publicly available solutions"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 349.78,
+      "end": 352.96,
+      "text": " from other creators, and the problem is that,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 353.11999999999995,
+      "end": 355,
+      "text": " especially, for instance, with things like Node.js,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 355.15999999999997,
+      "end": 357.96,
+      "text": " where the runtime evolves quite rapidly,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 358.11999999999995,
+      "end": 362,
+      "text": " the owners of this solution don't always keep the runtime up to date."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 362.17999999999995,
+      "end": 365.71999999999997,
+      "text": " So you might end up in a situation where you want to use a specific SARS solution,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 365.88,
+      "end": 368.55999999999995,
+      "text": " but then the runtime is not available in AWS anymore."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 368.56,
+      "end": 371.62,
+      "text": " So you are kind of forced either to try to open up your R"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 371.78000000000003,
+      "end": 374.36,
+      "text": " and get the owner to update and republish,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 374.52,
+      "end": 376.4,
+      "text": " or just fork it and maintain it yourself."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 376.58,
+      "end": 379.24,
+      "text": " So this might be one of the downsides that, of course,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 379.4,
+      "end": 381.62,
+      "text": " because somebody else is maintaining the solution,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 381.78000000000003,
+      "end": 385.12,
+      "text": " you need to make sure that they're actually committing to keep it up to date"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 385.28,
+      "end": 388.42,
+      "text": " and maintain it every time that there is a break and change like that."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 389,
+      "end": 391.96,
+      "text": " Now, of course, this is not the only way to share Lambda functions."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 392.12,
+      "end": 394.92,
+      "text": " We have other options. So any ideas?"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 395.42,
+      "end": 398.3,
+      "text": " Once you have a CloudFormation template, there's actually a lot of options."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 398.3,
+      "end": 401.64,
+      "text": " Around how you can share it, you can just create it and publish it on GitHub"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 401.8,
+      "end": 403.26,
+      "text": " or anywhere else on the web."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 403.44,
+      "end": 407.36,
+      "text": " The main disadvantage really there is that you're giving your users a bit more work."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 407.52000000000004,
+      "end": 409.24,
+      "text": " Just putting it in a GitHub repo."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 409.40000000000003,
+      "end": 412.56,
+      "text": " Versioning support is something you will have to think about yourself."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 412.74,
+      "end": 414.82,
+      "text": " And another thing is that you will have to decide then"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 414.98,
+      "end": 417.24,
+      "text": " how to package the Lambda function code."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 417.40000000000003,
+      "end": 420.12,
+      "text": " So if you publish it in a GitHub repository,"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 420.28000000000003,
+      "end": 423.46000000000004,
+      "text": " you can always just let the user package and deploy for themselves."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 423.62,
+      "end": 426.12,
+      "text": " For example, you could provide a SAM template"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 426.28000000000003,
+      "end": 428.04,
+      "text": " along with the code assets."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 428.04,
+      "end": 431.46000000000004,
+      "text": " This might be more work for the user because they'll need all the tools"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 431.62,
+      "end": 434.76000000000005,
+      "text": " to deploy the function in whatever language you have chosen."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 434.92,
+      "end": 438.6,
+      "text": " On the other hand, it does have the advantage that the code is easily visible"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 438.76000000000005,
+      "end": 441.88,
+      "text": " and the user has the freedom to change things as needed, fork it"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 442.06,
+      "end": 443.8,
+      "text": " and make their own versions of it."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 443.98,
+      "end": 445.40000000000003,
+      "text": " Now, when you're creating Lambda functions,"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 445.56,
+      "end": 447.76,
+      "text": " you have the options of specifying the code inline."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 447.94,
+      "end": 450.86,
+      "text": " You can specify it as a base 64 encoded zip file"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 451.02000000000004,
+      "end": 452.82000000000005,
+      "text": " or putting a zip file on S3."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 452.98,
+      "end": 455.36,
+      "text": " I think the zip file on S3 is probably the most common."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 455.52000000000004,
+      "end": 457.78000000000003,
+      "text": " The inline options are easier to publish."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 457.78,
+      "end": 460.53999999999996,
+      "text": " They limit because you don't have to worry about buckets,"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 460.7,
+      "end": 462.7,
+      "text": " but they limit how much code you can have"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 462.88,
+      "end": 465.65999999999997,
+      "text": " because there's a maximum there of four megabytes for the zip."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 465.84,
+      "end": 468.46,
+      "text": " And then you have to think about how do you bundle dependencies"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 468.61999999999995,
+      "end": 470.46,
+      "text": " into that inline code."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 470.61999999999995,
+      "end": 472.21999999999997,
+      "text": " If you do go for the bucket option,"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 472.38,
+      "end": 474.38,
+      "text": " you essentially have to make the bucket public"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 474.53999999999996,
+      "end": 478.09999999999997,
+      "text": " if you want it to be shared and usable as is by the user."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 478.26,
+      "end": 483.29999999999995,
+      "text": " Now, you can restrict your bucket to read only on specific prefixes,"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 483.47999999999996,
+      "end": 484.71999999999997,
+      "text": " just get object."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 484.9,
+      "end": 487.4,
+      "text": " And you can even use condition keys in the policy"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 487.4,
+      "end": 490.82,
+      "text": " to get access to the AWS Lambda service itself."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 490.97999999999996,
+      "end": 493.65999999999997,
+      "text": " So that's the only principle that will be able to read the code"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 493.82,
+      "end": 495.82,
+      "text": " when it's deploying the Lambda function."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 496,
+      "end": 498.58,
+      "text": " And this is something that we have tried out"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 498.73999999999995,
+      "end": 502.34,
+      "text": " and we have a GitHub repository with a code example"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 502.5,
+      "end": 504.58,
+      "text": " showing you exactly how to configure that bucket."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 504.76,
+      "end": 508.76,
+      "text": " It is a public bucket, so it's not going to be for everyone's taste."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 508.91999999999996,
+      "end": 511.84,
+      "text": " It's getting to a stage now where public buckets"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 512,
+      "end": 514.68,
+      "text": " are becoming like socially unacceptable"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 514.68,
+      "end": 517.78,
+      "text": " as regarded as being a bit insecure,"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 517.9399999999999,
+      "end": 520.28,
+      "text": " but it can be done for specific cases like this."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 520.4399999999999,
+      "end": 523.56,
+      "text": " Sometimes if you want to provide code publicly via S3,"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 523.7399999999999,
+      "end": 525.4399999999999,
+      "text": " you need to have public access."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 525.62,
+      "end": 526.8599999999999,
+      "text": " So there are ways of doing that"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 527.04,
+      "end": 529.62,
+      "text": " where you give the least privilege possible."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 529.78,
+      "end": 533,
+      "text": " Another simple way to let users deploy your CloudFormation template"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 533.16,
+      "end": 535.12,
+      "text": " is to create a one-click URL."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 535.28,
+      "end": 536.28,
+      "text": " That's been around for a while."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 536.4599999999999,
+      "end": 538.12,
+      "text": " You might have seen websites and GitHub repos"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 538.3,
+      "end": 541.3399999999999,
+      "text": " with click to deploy in CloudFormation,"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 541.5,
+      "end": 543.7199999999999,
+      "text": " and it just gives you the ability to have a button on your website"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 543.72,
+      "end": 546.1800000000001,
+      "text": " that would take users directly to the CloudFormation UI"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 546.34,
+      "end": 549.5600000000001,
+      "text": " with the template preloaded from S3."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 549.72,
+      "end": 553.1800000000001,
+      "text": " Now, if you don't want to make the template available on GitHub or S3,"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 553.36,
+      "end": 557.02,
+      "text": " you can publish it as a module on the CloudFormation registry."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 557.1800000000001,
+      "end": 560.02,
+      "text": " So this also gives you options for public and private access"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 560.1800000000001,
+      "end": 562.6800000000001,
+      "text": " like the serverless application repository,"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 562.86,
+      "end": 565.2,
+      "text": " and it will also allow you to do versioning."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 565.36,
+      "end": 568.2,
+      "text": " It's basically a way to publish a set of resources in a template"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 568.36,
+      "end": 571.32,
+      "text": " and let other users include that module in their template."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 571.32,
+      "end": 573.7800000000001,
+      "text": " Then when the user deploys their one,"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 573.94,
+      "end": 576.44,
+      "text": " CloudFormation will automatically kind of inline"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 576.62,
+      "end": 578.9000000000001,
+      "text": " all of your resources from the module."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 579.08,
+      "end": 582.82,
+      "text": " Now, CloudFormation registry is there for lots of different purposes."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 583,
+      "end": 584.82,
+      "text": " You can publish your own providers there too."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 585,
+      "end": 587.4200000000001,
+      "text": " It's not incredibly common to see it used,"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 588.46,
+      "end": 591.3000000000001,
+      "text": " but if you're doing something public, it's an option."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 591.46,
+      "end": 592.88,
+      "text": " If you want it to be private,"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 593.0400000000001,
+      "end": 595.0400000000001,
+      "text": " so just for your organization accounts,"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 595.22,
+      "end": 596.22,
+      "text": " then you might say,"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 596.3800000000001,
+      "end": 598.1800000000001,
+      "text": " well, why bother using the CloudFormation registry?"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 598.18,
+      "end": 602.18,
+      "text": " Because I think service catalog is probably a more common approach"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 602.3599999999999,
+      "end": 604.56,
+      "text": " than the CloudFormation registry in that case."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 605.2399999999999,
+      "end": 607.06,
+      "text": " So you've got, I think, quite a few options"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 607.2399999999999,
+      "end": 609.9799999999999,
+      "text": " when you just have a CloudFormation template and some code,"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 610.16,
+      "end": 613.1999999999999,
+      "text": " but of course, it's not restricted to CloudFormation Luciano."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 613.3599999999999,
+      "end": 618.78,
+      "text": " Modules are something you can do also with Terraform or OpenTofu, I guess."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 620.12,
+      "end": 623.88,
+      "text": " Yeah, exactly, and this is one of the killer features of Terraform."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 623.88,
+      "end": 628.1,
+      "text": " And if people have a preference for Terraform over CloudFormation,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 628.26,
+      "end": 631.26,
+      "text": " you can basically make things reusable"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 631.4399999999999,
+      "end": 634.4399999999999,
+      "text": " by defining infrastructure as called as Terraform modules."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 634.6,
+      "end": 637.9399999999999,
+      "text": " And the idea is that you can package together"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 638.1,
+      "end": 640.82,
+      "text": " a collection of resources in Terraform files,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 640.98,
+      "end": 645.4,
+      "text": " and then you expose an interface that can receive inputs for configuration"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 645.58,
+      "end": 648.74,
+      "text": " and provide outputs to basically be able to connect"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 648.9,
+      "end": 650.24,
+      "text": " what you generated from your module"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 650.24,
+      "end": 653.74,
+      "text": " with the rest of your own infrastructure that you're working on."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 653.92,
+      "end": 655.58,
+      "text": " And this is a fairly common approach."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 655.74,
+      "end": 657.92,
+      "text": " People using Terraform should be quite used to this,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 658.08,
+      "end": 661.72,
+      "text": " especially since modules have been available for so long."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 661.88,
+      "end": 664.42,
+      "text": " So in this particular use case, what you could do"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 664.6,
+      "end": 667.1,
+      "text": " is basically define everything you need for this Lambda Authorizer"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 667.26,
+      "end": 669.88,
+      "text": " to work as a module and then make this module available."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 670.0600000000001,
+      "end": 671.6,
+      "text": " So now, once you have the module,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 671.76,
+      "end": 673.48,
+      "text": " what are the options to make it available?"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 673.64,
+      "end": 676.72,
+      "text": " And I think the most common one is to just publish it on GitHub,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 676.72,
+      "end": 680.38,
+      "text": " because one of the many ways that you can install modules"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 680.5600000000001,
+      "end": 682.38,
+      "text": " coming from third parties"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 682.5600000000001,
+      "end": 684.5600000000001,
+      "text": " is just by referencing the GitHub repository."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 684.72,
+      "end": 687.3000000000001,
+      "text": " So if that's a public repo, it's very easy."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 687.48,
+      "end": 690.4,
+      "text": " So most of the modules out there, public available,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 690.5600000000001,
+      "end": 692.0600000000001,
+      "text": " will follow this approach."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 692.22,
+      "end": 695.02,
+      "text": " There is also another option called Terraform Registry,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 695.1800000000001,
+      "end": 696.48,
+      "text": " which is a bit more centralized."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 696.64,
+      "end": 698.14,
+      "text": " It's managed by Terraform itself."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 698.32,
+      "end": 701.32,
+      "text": " And as a Terraform user, you can publish your own modules"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 701.48,
+      "end": 702.98,
+      "text": " into the registry."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 703.1600000000001,
+      "end": 706.36,
+      "text": " This is basically designed specifically for sharing Terraform modules"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 706.36,
+      "end": 707.6,
+      "text": " and providers."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 707.78,
+      "end": 710.6,
+      "text": " So you can also use that not just for modules,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 710.78,
+      "end": 712.48,
+      "text": " but if you have more advanced use cases"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 712.64,
+      "end": 715.02,
+      "text": " where you want to create custom providers,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 715.2,
+      "end": 718.12,
+      "text": " maybe because you are interacting with resources outside AWS,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 718.28,
+      "end": 720.7,
+      "text": " you're using other, I don't know, SaaS solutions,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 720.86,
+      "end": 723.32,
+      "text": " and you are creating your own Terraform binding code"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 723.48,
+      "end": 727.4,
+      "text": " to be able to provision resources into other third-party SaaS."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 727.58,
+      "end": 730.28,
+      "text": " So it's very powerful because it kind of gives you"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 730.44,
+      "end": 733.86,
+      "text": " all the extensibility of Terraform in one place."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 733.86,
+      "end": 736.36,
+      "text": " Once you have your modules in the Terraform registry,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 736.52,
+      "end": 738.64,
+      "text": " you can easily include them in your configuration"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 738.8000000000001,
+      "end": 743.22,
+      "text": " so anyone can just reference a module from the registry."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 743.4,
+      "end": 746.4,
+      "text": " Another approach which is somewhat similar to CloudFormation"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 746.5600000000001,
+      "end": 750.1800000000001,
+      "text": " is that you can just make things available in a URL."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 750.36,
+      "end": 751.86,
+      "text": " So this is called direct download,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 752.02,
+      "end": 754.1800000000001,
+      "text": " and it's basically a tarball or a zip file"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 754.36,
+      "end": 756.44,
+      "text": " that can live in a CDN or your own website"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 756.6,
+      "end": 760.36,
+      "text": " or basically anywhere else where you can access through an HTTP URL."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 760.52,
+      "end": 762.64,
+      "text": " And this way, you have another additional way"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 762.64,
+      "end": 764.88,
+      "text": " to reference all the Terraform module code"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 765.06,
+      "end": 768.46,
+      "text": " and include it into another project when needed."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 768.64,
+      "end": 771.8,
+      "text": " It's, I don't know if I see a use case for this."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 771.96,
+      "end": 775.46,
+      "text": " Like, I think if I had this need, I would probably prefer GitHub"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 775.64,
+      "end": 779.96,
+      "text": " rather than having to think how to host that package myself in a URL."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 780.14,
+      "end": 782.8,
+      "text": " But if you have strong reasons not to use GitHub,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 782.96,
+      "end": 784.72,
+      "text": " that can be probably another approach."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 784.88,
+      "end": 786.64,
+      "text": " There is another idea that might come to mind"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 786.8,
+      "end": 791.3,
+      "text": " because we are thinking about packaging this Lambda into a zip file,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 791.3,
+      "end": 795.3,
+      "text": " but you probably know that this is not the only option to provide Lambda code"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 795.4799999999999,
+      "end": 797.64,
+      "text": " because the other option is to use container images."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 797.8,
+      "end": 798.8,
+      "text": " And if we think about that,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 798.9799999999999,
+      "end": 801.7199999999999,
+      "text": " we open up another bunch of possible options"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 801.88,
+      "end": 803.68,
+      "text": " on how to host the Lambda code"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 803.8399999999999,
+      "end": 805.8,
+      "text": " because basically we can host it everywhere"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 805.9799999999999,
+      "end": 807.9799999999999,
+      "text": " where you can host a container image."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 808.14,
+      "end": 812.9799999999999,
+      "text": " And the obvious options are you can use Docker Hub"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 813.14,
+      "end": 816.14,
+      "text": " or you can use an ECR registry"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 816.3,
+      "end": 819.14,
+      "text": " or you can even use GitHub registry"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 819.14,
+      "end": 822.8199999999999,
+      "text": " because recently GitHub opened up support also for Docker images"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 822.98,
+      "end": 823.98,
+      "text": " in their own registry."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 824.14,
+      "end": 825.8199999999999,
+      "text": " This is actually not something we have tried,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 825.98,
+      "end": 829.4,
+      "text": " but because you can do public images, that should work out of the box"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 829.56,
+      "end": 831.74,
+      "text": " because it's still using the OCI standard"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 831.9,
+      "end": 835.24,
+      "text": " in terms of allowing people to pull their containers."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 835.4,
+      "end": 838.3199999999999,
+      "text": " There is one thing that I think is worth discussing"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 838.48,
+      "end": 840.8199999999999,
+      "text": " because we were actually thinking about this option."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 840.98,
+      "end": 843.8199999999999,
+      "text": " When you think about hosting stuff on S3,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 843.98,
+      "end": 845.64,
+      "text": " if this is your own bucket,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 845.64,
+      "end": 849.42,
+      "text": " then imagine that that thing becomes very successful,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 849.6,
+      "end": 851.3,
+      "text": " it goes viral, everyone is using it,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 851.46,
+      "end": 854.46,
+      "text": " you have millions of downloads per week,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 854.64,
+      "end": 857.46,
+      "text": " and then suddenly you realize, wait, I'm paying for all of this."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 857.64,
+      "end": 859.46,
+      "text": " I'm paying for all the access to this bucket."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 859.64,
+      "end": 860.96,
+      "text": " So this is maybe not desirable"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 861.14,
+      "end": 862.46,
+      "text": " because you created something open source,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 862.64,
+      "end": 865.46,
+      "text": " you are not monetizing from it, and suddenly you even have a cost."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 865.64,
+      "end": 868.96,
+      "text": " So one thing that is commonly done in those cases,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 869.14,
+      "end": 871.64,
+      "text": " so when people are sharing resources over S3,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 871.8,
+      "end": 873.96,
+      "text": " but they don't want to take a hit on the cost,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 873.96,
+      "end": 876.2800000000001,
+      "text": " is to use a feature called RequestedPays,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 876.46,
+      "end": 878.2800000000001,
+      "text": " which basically allows you to say,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 878.46,
+      "end": 880.2800000000001,
+      "text": " you can only access this public resource"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 880.46,
+      "end": 883.2800000000001,
+      "text": " if you decide that you are going to be paying for the access cost."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 883.46,
+      "end": 886.2800000000001,
+      "text": " There is one problem with this in this particular case,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 886.46,
+      "end": 889.2800000000001,
+      "text": " is that you need to pass a header in the S3 request"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 889.46,
+      "end": 892.2800000000001,
+      "text": " to say, I accept the cost of downloading this."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 892.46,
+      "end": 895.2800000000001,
+      "text": " So it's almost like saying, I am aware that there is a cost,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 895.46,
+      "end": 897.2800000000001,
+      "text": " I'm not just downloading this for free,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 897.46,
+      "end": 900.2800000000001,
+      "text": " I'm going to be taking on the cost of the download."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 900.46,
+      "end": 903.2800000000001,
+      "text": " And this way, AWS basically allows this mechanism"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 903.28,
+      "end": 905.6,
+      "text": " where you as a publisher don't have to take the cost"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 905.78,
+      "end": 908.6,
+      "text": " and the user is aware that they are paying the cost for the download."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 908.78,
+      "end": 911.6,
+      "text": " The problem is that because it requires an extra header,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 911.78,
+      "end": 913.6,
+      "text": " this is not something that is built in"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 913.78,
+      "end": 917.6,
+      "text": " when you reference the Lambda code from S3."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 917.78,
+      "end": 920.6,
+      "text": " You cannot just say, use the x-amz-request-payer header."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 920.78,
+      "end": 923.6,
+      "text": " So basically, this option is not available for you."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 923.78,
+      "end": 928.6,
+      "text": " And this is one reason why if you want to use SAR,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 928.78,
+      "end": 931.6,
+      "text": " in that case, all your code is going to be hosted"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 931.6,
+      "end": 933.4200000000001,
+      "text": " in a bucket that is owned by AWS."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 933.6,
+      "end": 934.9200000000001,
+      "text": " So you don't have to worry about cost,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 935.1,
+      "end": 937.9200000000001,
+      "text": " you don't have to worry about the fact that people cannot specify"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 938.1,
+      "end": 940.4200000000001,
+      "text": " the request by your header as another alternative."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 940.6,
+      "end": 942.4200000000001,
+      "text": " So basically, this reinforces the idea that SAR"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 942.6,
+      "end": 945.4200000000001,
+      "text": " is probably the simplest approach for this particular use case."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 945.6,
+      "end": 947.9200000000001,
+      "text": " That maybe makes me think that you mentioned SAR"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 948.1,
+      "end": 949.9200000000001,
+      "text": " is like an app store for your resources."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 950.1,
+      "end": 952.4200000000001,
+      "text": " So now the next question is,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 952.6,
+      "end": 954.4200000000001,
+      "text": " what if we actually want to make a business out of it?"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 954.6,
+      "end": 958.4200000000001,
+      "text": " Maybe we want to make this thing something that people have to pay to use it,"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 958.6,
+      "end": 960.9200000000001,
+      "text": " because maybe it's giving them so much value that..."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 960.92,
+      "end": 962.74,
+      "text": " And we have so much maintenance burden"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 962.92,
+      "end": 965.74,
+      "text": " that it makes sense to make it as a, I don't know, paid service."
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 965.92,
+      "end": 966.74,
+      "text": " Does that make sense?"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 966.92,
+      "end": 968.74,
+      "text": " And if it does make sense, what are the options"
+    },
+    {
+      "speakerLabel": "spk_1",
+      "start": 968.92,
+      "end": 971.74,
+      "text": " in terms of hosting it as a paid solution?"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 971.92,
+      "end": 973.74,
+      "text": " While SAR might be like a bit of an app store,"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 973.92,
+      "end": 975.74,
+      "text": " you can't monetize on it."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 975.92,
+      "end": 977.24,
+      "text": " But there is an option for that."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 977.42,
+      "end": 980.74,
+      "text": " You can publish CloudFormation templates to the AWS Marketplace"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 980.92,
+      "end": 982.74,
+      "text": " and set a price there."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 982.92,
+      "end": 984.74,
+      "text": " So you might be familiar with AWS Marketplace"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 984.92,
+      "end": 989.74,
+      "text": " as a way to get third party products like AMIs, SaaS solutions."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 989.74,
+      "end": 992.5600000000001,
+      "text": " You can buy through AWS Marketplace, like even Datadog and things."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 992.74,
+      "end": 995.5600000000001,
+      "text": " You can buy through there so you can get it on your AWS bill."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 995.74,
+      "end": 998.5600000000001,
+      "text": " But you can just provide CloudFormation templates as a product"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 998.74,
+      "end": 1001.5600000000001,
+      "text": " and then you can charge people a monthly or a once-off cost"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1001.74,
+      "end": 1003.5600000000001,
+      "text": " or lots of different billing options."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1003.74,
+      "end": 1006.5600000000001,
+      "text": " So if you think there is a market for your highly prized Lambda function,"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1006.74,
+      "end": 1008.5600000000001,
+      "text": " this is a reasonable option."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1008.74,
+      "end": 1011.5600000000001,
+      "text": " Now, I don't have any experience really of doing CloudFormation templates"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1011.74,
+      "end": 1013.5600000000001,
+      "text": " in the AWS Marketplace,"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1013.74,
+      "end": 1016.5600000000001,
+      "text": " but I frequently listen to the Cloudonaut podcast."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1016.56,
+      "end": 1019.38,
+      "text": " We've mentioned it a few times where Michael and Andreas talk"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1019.56,
+      "end": 1023.38,
+      "text": " about their experiences in publishing their products to the Marketplace."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1023.56,
+      "end": 1025.3799999999999,
+      "text": " And we will have a link in the show notes"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1025.56,
+      "end": 1029.3799999999999,
+      "text": " to a really great blog post from them with an accompanying video."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1029.56,
+      "end": 1032.3799999999999,
+      "text": " And it's all about how to provide CloudFormation"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1032.56,
+      "end": 1035.3799999999999,
+      "text": " as a product on the AWS Marketplace."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1035.56,
+      "end": 1037.3799999999999,
+      "text": " And unlike the Apple App Store,"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1037.56,
+      "end": 1039.3799999999999,
+      "text": " they don't completely fleece you on commission."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1039.56,
+      "end": 1042.3799999999999,
+      "text": " I think it's much more reasonable on the Marketplace."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1042.38,
+      "end": 1046.2,
+      "text": " I think that's probably a good place to wrap this one up."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1046.38,
+      "end": 1050.2,
+      "text": " And I hope we've covered all the options for publishing Lambda functions"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1050.38,
+      "end": 1054.2,
+      "text": " and indeed other AWS resources for public consumption."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1054.38,
+      "end": 1057.2,
+      "text": " We generally recommend SAR, the Serverless Application Repository,"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1057.38,
+      "end": 1061.2,
+      "text": " as the first option since it handles the code distribution"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1061.38,
+      "end": 1063.2,
+      "text": " and a lot of the complexity."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1063.38,
+      "end": 1066.2,
+      "text": " But let us know if you can think of any other creative ways for this."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1066.38,
+      "end": 1069.2,
+      "text": " Also, watch out and see what Luciano does in the future."
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1069.2,
+      "end": 1072.02,
+      "text": " And if he manages to become a high-earning AWS Marketplace"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1072.2,
+      "end": 1075.02,
+      "text": " CloudFormation entrepreneur! 😜"
+    },
+    {
+      "speakerLabel": "spk_0",
+      "start": 1075.02,
+      "end": 1099.84,
+      "text": " Thank you for listening and until next time, goodbye. 👋"
+    }
+  ]
+}

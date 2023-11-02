@@ -1,0 +1,61 @@
+{
+    "Comment": "Audio transcription post-processing for podcasts like AWS Bites",
+    "StartAt": "Generate Summary",
+    "States": {
+        "Generate Summary": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "InputPath": "$",
+            "ResultSelector": {
+                "summary.$": "$.Payload.summary"
+            },
+            "Parameters": {
+                "FunctionName": "${SummaryFunctionArn}",
+                "Payload": {
+                    "transcriptKey.$": "$.transcriptKey"
+                }
+            },
+            "Retry": [
+                {
+                    "ErrorEquals": [
+                        "States.TaskFailed"
+                    ],
+                    "IntervalSeconds": 5,
+                    "MaxAttempts": 2,
+                    "BackoffRate": 1.5
+                }
+            ],
+            "Next": "Create GitHub PR"
+        },
+        "Create GitHub PR": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "InputPath": "$",
+            "ResultSelector": {
+                "url.$": "$.Payload.prUrl"
+            },
+            "ResultPath": "$.PRResult",
+            "Parameters": {
+                "FunctionName": "${PullRequestFunctionArn}",
+                "Payload": {
+                    "transcriptKey.$": "$$.Execution.Input.transcriptKey",
+                    "summary.$": "$.summary"
+                }
+            },
+            "Retry": [
+                {
+                    "ErrorEquals": [
+                        "States.TaskFailed"
+                    ],
+                    "IntervalSeconds": 5,
+                    "MaxAttempts": 2,
+                    "BackoffRate": 1.5
+                }
+            ],
+            "Next": "End"
+        },
+        "End": {
+            "Type": "Succeed"
+        }
+    }
+}
