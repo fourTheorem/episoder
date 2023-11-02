@@ -7,9 +7,15 @@ import { Summary } from '../../lib/types'
  * @returns a string like '00:00' or '123:59'
  */
 export function secondsToYtTime (seconds: number): string {
-  const minutes = String(Math.floor(seconds / 60))
+  const hours = String(Math.floor(seconds / 3600))
+  const minutes = String(Math.floor(seconds % 3600 / 60))
   const roundedSeconds = String(Math.floor(seconds % 60))
-  return `${minutes.padStart(2, '0')}:${roundedSeconds.padStart(2, '0')}`
+  let res = ''
+  if (hours !== '0') {
+    res += `${hours.padStart(2, '0')}:`
+  }
+  res += `${minutes.padStart(2, '0')}:${roundedSeconds.padStart(2, '0')}`
+  return res
 }
 
 /**

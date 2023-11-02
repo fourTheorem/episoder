@@ -8,8 +8,8 @@ test('chapter timestamps are correctly generated in a YouTube format', async () 
   assert.equal(secondsToYtTime(60), '01:00')
   assert.equal(secondsToYtTime(839.6), '13:59')
   assert.equal(secondsToYtTime(999.99), '16:39')
-  assert.equal(secondsToYtTime(3600), '60:00')
-  assert.equal(secondsToYtTime(7313), '121:53')
+  assert.equal(secondsToYtTime(3600), '01:00:00')
+  assert.equal(secondsToYtTime(7313), '02:01:53')
 })
 
 test('PR description is correctly generated', async () => {
