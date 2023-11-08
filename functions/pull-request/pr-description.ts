@@ -37,6 +37,6 @@ ${summary.episodeSummary}
 ${ytChapters}
 
 ## Suggested Tags
-${summary.tags.join('\n')}
+${summary.tags.join(', ')}
 `
 }
