@@ -63,9 +63,6 @@ We hallucinate about topics we don't understand
 49:59 Conclusion and desperate appeal for more subscribers
 
 ## Suggested Tags
-InfiniDash
-SpodlgeWrangler
-CloudFormation
-Cost Explorer
+InfiniDash, SpodlgeWrangler, CloudFormation, Cost Explorer
 `)
 })
