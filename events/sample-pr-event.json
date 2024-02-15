@@ -1,0 +1,38 @@
+{
+  "summary": {
+    "episodeSummary": "In this episode, we discuss how Node.js has changed web development and made JavaScript a versatile language on both frontend and backend. We talk about the event loop, non-blocking I/O, and Node's module system. We also cover using Node.js with frameworks like Express and Hapi for building APIs and web apps. Overall, we explore why Node.js has become so popular for scalable, real-time web apps.",
+    "chapters": [
+      {
+        "startTimestamp": 0,
+        "summary": "Node.js has been considered a game changer and possibly the biggest innovation in web development in the past decade."
+      }
+    ],
+    "tags": [
+      "Node.js",
+      "JavaScript",
+      "Web Development",
+      "Frontend",
+      "Backend",
+      "Event Loop",
+      "Non-blocking",
+      "Asynchronous",
+      "Express",
+      "Hapi",
+      "REST API",
+      "Real-time",
+      "Scalable",
+      "Web Application",
+      "Framework",
+      "Programming",
+      "Coding",
+      "Developer",
+      "Server",
+      "npm",
+      "Modules",
+      "Callbacks",
+      "Promises",
+      "Async/Await"
+    ]
+  },
+  "transcriptKey": "processed-transcripts/998.json"
+}

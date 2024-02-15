@@ -1,0 +1,8 @@
+{
+  "Parameters": {
+    "BUCKET_NAME": "pod-transcription-935672627075-eu-west-1",
+    "GIT_REPO_URL": "https://github.com/awsbites/aws-bites-site.git",
+    "GIT_USER_EMAIL": "automation@awsbites.com",
+    "GIT_USER_NAME": "Transcription Automation"
+  }
+}
