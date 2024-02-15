@@ -41,7 +41,7 @@ interface PullRequestEvent {
  * - Returns the GitHub PR URL
  *
  * This function requires a GitHub Personal Access Token, preferably a fine-grained token. It should be stored with the username
- * in a SSM SecureString Parameter `/podwhisperer/gitHubUserCredentials` in the format <Username>:<GitHubPersonalAccessToken>
+ * in a SSM SecureString Parameter (defined by env GIT_HUB_CREDENTIALS_SSM_PARAMETER) in the format <Username>:<GitHubPersonalAccessToken>
  */
 export const handleEvent = middify(async (event: PullRequestEvent) => {
   const transcript = await getS3JSON(s3Client, BUCKET_NAME, event.transcriptKey)
