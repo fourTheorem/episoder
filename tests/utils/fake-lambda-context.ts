@@ -1,4 +1,4 @@
-import { Context } from 'aws-lambda'
+import type { Context } from 'aws-lambda'
 
 export const fakeLambdaContext: Context = {
   functionName: 'test',
@@ -12,5 +12,5 @@ export const fakeLambdaContext: Context = {
   getRemainingTimeInMillis: () => 1000,
   done: () => {},
   fail: () => {},
-  succeed: () => {}
+  succeed: () => {},
 }

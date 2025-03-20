@@ -1,4 +1,4 @@
-import { test, assert } from 'vitest'
+import { assert, test } from 'vitest'
 import { createPullRequestDescription, secondsToYtTime } from '../../../functions/pull-request/pr-description'
 
 test('chapter timestamps are correctly generated in a YouTube format', async () => {
@@ -14,37 +14,40 @@ test('chapter timestamps are correctly generated in a YouTube format', async () 
 
 test('PR description is correctly generated', async () => {
   const summary = {
-    episodeSummary: 'We hallucinate about topics we don\'t understand',
-    chapters: [{
-      startTimestamp: 0,
-      summary: 'Introduction'
-    },
-    {
-      startTimestamp: 23.4,
-      summary: 'Uses cases for AWS InfiniDash'
-    },
-    {
-      startTimestamp: 63.7,
-      summary: 'Comparing InfiniDash to Amazon SplodgeWrangler'
-    },
-    {
-      startTimestamp: 391.999,
-      summary: 'Securing a second mortgage to pay for InfiniDash'
-    },
-    {
-      startTimestamp: 1030.30,
-      summary: 'How to lobby the CloudFormation team for full InfiniDash support'
-    },
-    {
-      startTimestamp: 2999.123,
-      summary: 'Conclusion and desperate appeal for more subscribers'
-    }
+    episodeSummary: "We hallucinate about topics we don't understand",
+    chapters: [
+      {
+        startTimestamp: 0,
+        summary: 'Introduction',
+      },
+      {
+        startTimestamp: 23.4,
+        summary: 'Uses cases for AWS InfiniDash',
+      },
+      {
+        startTimestamp: 63.7,
+        summary: 'Comparing InfiniDash to Amazon SplodgeWrangler',
+      },
+      {
+        startTimestamp: 391.999,
+        summary: 'Securing a second mortgage to pay for InfiniDash',
+      },
+      {
+        startTimestamp: 1030.3,
+        summary: 'How to lobby the CloudFormation team for full InfiniDash support',
+      },
+      {
+        startTimestamp: 2999.123,
+        summary: 'Conclusion and desperate appeal for more subscribers',
+      },
     ],
-    tags: ['InfiniDash', 'SpodlgeWrangler', 'CloudFormation', 'Cost Explorer']
+    tags: ['InfiniDash', 'SpodlgeWrangler', 'CloudFormation', 'Cost Explorer'],
   }
 
   const markdown = createPullRequestDescription(summary)
-  assert.equal(markdown, `
+  assert.equal(
+    markdown,
+    `
 # Transcript
 
 This change includes the transcript for the podcast episode, created by [Podwhisperer](https://github.com/fourTheorem/podwhisperer).
@@ -64,5 +67,6 @@ We hallucinate about topics we don't understand
 
 ## Suggested Tags
 InfiniDash, SpodlgeWrangler, CloudFormation, Cost Explorer
-`)
+`,
+  )
 })

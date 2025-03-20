@@ -1,5 +1,5 @@
+import { assert, test } from 'vitest'
 import envs from '../../lib/envs'
-import { test, assert } from 'vitest'
 
 process.env.EXAMPLE_KEY_1 = 'test'
 

@@ -65,7 +65,7 @@ Resources:
       Handler: app.handleEvent
       Timeout: 600
       MemorySize: 1024
-      Runtime: nodejs18.x
+      Runtime: nodejs22.x
       Layers:
         - !Sub arn:aws:lambda:${AWS::Region}:553035198032:layer:git-lambda2:8
       Environment:
@@ -102,7 +102,7 @@ Resources:
       Handler: app.handleEvent
       Timeout: 600
       MemorySize: 1024
-      Runtime: nodejs18.x
+      Runtime: nodejs22.x
       Environment:
         Variables:
           BUCKET_NAME: !Ref BucketName

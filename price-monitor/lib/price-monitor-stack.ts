@@ -1,7 +1,7 @@
+import {} from '@aws-sdk/client-pricing'
 /* eslint-disable no-new */
 import * as cdk from 'aws-cdk-lib'
-import { } from '@aws-sdk/client-pricing'
-import { Construct } from 'constructs'
+import type { Construct } from 'constructs'
 
 import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch'
 
@@ -17,7 +17,7 @@ interface PriceMonitorStackProps extends cdk.StackProps {
 }
 
 export class PriceMonitorStack extends cdk.Stack {
-  constructor (scope: Construct, id: string, props: PriceMonitorStackProps) {
+  constructor(scope: Construct, id: string, props: PriceMonitorStackProps) {
     super(scope, id, props)
 
     const { modelId, bedrockRegion } = props
@@ -25,7 +25,7 @@ export class PriceMonitorStack extends cdk.Stack {
     const dashboard = new cloudwatch.Dashboard(this, 'Dashboard', {
       dashboardName: 'EpisoderPriceMonitor',
       defaultInterval: cdk.Duration.days(7),
-      periodOverride: cloudwatch.PeriodOverride.AUTO
+      periodOverride: cloudwatch.PeriodOverride.AUTO,
     })
 
     const invocationsMetric = new cloudwatch.Metric({
@@ -35,8 +35,8 @@ export class PriceMonitorStack extends cdk.Stack {
       statistic: 'Sum',
       label: 'Invocations',
       dimensionsMap: {
-        ModelId: modelId
-      }
+        ModelId: modelId,
+      },
     })
 
     const inputTokensMetric = new cloudwatch.Metric({
@@ -46,8 +46,8 @@ export class PriceMonitorStack extends cdk.Stack {
       statistic: 'Sum',
       label: 'Input Tokens',
       dimensionsMap: {
-        ModelId: modelId
-      }
+        ModelId: modelId,
+      },
     })
 
     const outputTokensMetric = new cloudwatch.Metric({
@@ -57,24 +57,24 @@ export class PriceMonitorStack extends cdk.Stack {
       statistic: 'Sum',
       label: 'Output Tokens',
       dimensionsMap: {
-        ModelId: modelId
-      }
+        ModelId: modelId,
+      },
     })
 
     const inputTokensCostMetric = new cloudwatch.MathExpression({
       label: 'Input Token Cost ($)',
       expression: `(inputTokens / 1000) * ${CLAUDE_V2_ON_DEMAND_COST_PER_1000_INPUT_TOKENS}`,
       usingMetrics: {
-        inputTokens: inputTokensMetric
-      }
+        inputTokens: inputTokensMetric,
+      },
     })
 
     const outputTokensCostMetric = new cloudwatch.MathExpression({
       label: 'Output Token Cost ($)',
       expression: `(outputTokens / 1000) * ${CLAUDE_V2_ON_DEMAND_COST_PER_1000_OUTPUT_TOKENS}`,
       usingMetrics: {
-        outputTokens: outputTokensMetric
-      }
+        outputTokens: outputTokensMetric,
+      },
     })
 
     const totalCostMetric = new cloudwatch.MathExpression({
@@ -82,8 +82,8 @@ export class PriceMonitorStack extends cdk.Stack {
       expression: '(inputTokensCost + outputTokensCost)',
       usingMetrics: {
         inputTokensCost: inputTokensCostMetric,
-        outputTokensCost: outputTokensCostMetric
-      }
+        outputTokensCost: outputTokensCostMetric,
+      },
     })
 
     const costPerInvocationMetric = new cloudwatch.MathExpression({
@@ -91,8 +91,8 @@ export class PriceMonitorStack extends cdk.Stack {
       expression: 'totalCost / invocations',
       usingMetrics: {
         totalCost: totalCostMetric,
-        invocations: invocationsMetric
-      }
+        invocations: invocationsMetric,
+      },
     })
 
     const priceWidget = new cloudwatch.SingleValueWidget({
@@ -108,8 +108,8 @@ export class PriceMonitorStack extends cdk.Stack {
         inputTokensCostMetric,
         outputTokensCostMetric,
         totalCostMetric,
-        costPerInvocationMetric
-      ]
+        costPerInvocationMetric,
+      ],
     })
 
     dashboard.addWidgets(priceWidget)
@@ -120,8 +120,8 @@ export class PriceMonitorStack extends cdk.Stack {
       period: cdk.Duration.hours(1),
       usingMetrics: {
         inputTokensCost: inputTokensCostMetric,
-        outputTokensCost: outputTokensCostMetric
-      }
+        outputTokensCost: outputTokensCostMetric,
+      },
     })
 
     const hourlyCostAlarm = hourlyCostMetric.createAlarm(this, 'TotalCostAlarm', {
@@ -131,7 +131,7 @@ export class PriceMonitorStack extends cdk.Stack {
       treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
       datapointsToAlarm: 3,
       alarmName: `Bedrock ${modelId} Hourly Cost`,
-      alarmDescription: `Total Cost per Hour exceeds $${USD_HOURLY_COST_ALARM_THRESHOLD}`
+      alarmDescription: `Total Cost per Hour exceeds $${USD_HOURLY_COST_ALARM_THRESHOLD}`,
     })
 
     const hourlyCostAlarmWidget = new cloudwatch.AlarmWidget({
@@ -139,7 +139,7 @@ export class PriceMonitorStack extends cdk.Stack {
       height: 6,
       width: 24,
       region: bedrockRegion,
-      title: `Bedrock ${modelId} Hourly Cost Alarm`
+      title: `Bedrock ${modelId} Hourly Cost Alarm`,
     })
     dashboard.addWidgets(hourlyCostAlarmWidget)
   }

@@ -1,6 +1,6 @@
-import { Transcript } from './types'
+import type { Transcript } from './types'
 
-export function createPrompt (transcript: Transcript): string {
+export function createPrompt(transcript: Transcript): string {
   return `Human: Please provide a friendly, positive episode summary (first-person plural and at least 120 words),
 followed by at least 10 chapter summaries for the following podcast transcript JSON.
 The transcript segments have start and end time in floating point seconds.
