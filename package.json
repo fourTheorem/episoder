@@ -9,7 +9,7 @@
     "test": "npm run test:lint && npm run test:unit",
     "build": "tsc",
     "audit": "npm audit --omit dev",
-    "prepare": "husky install"
+    "prepare": "if [ \"$NODE_ENV\" = \"development\" ]; then husky install; fi"
   },
   "keywords": [],
   "author": "fourTheorem Ltd.",
