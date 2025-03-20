@@ -1,14 +1,14 @@
-import path from 'node:path'
-import { tmpdir } from 'node:os'
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
-import { simpleGit } from 'simple-git'
-import { SSMClient, GetParameterCommand } from '@aws-sdk/client-ssm'
+import { tmpdir } from 'node:os'
+import path from 'node:path'
 import { S3Client } from '@aws-sdk/client-s3'
+import { GetParameterCommand, SSMClient } from '@aws-sdk/client-ssm'
 import { Octokit } from 'octokit'
+import { simpleGit } from 'simple-git'
 
 import envs from '../../lib/envs'
-import type { Summary } from '../../lib/types'
 import { logger, middify } from '../../lib/lambda-common'
+import type { Summary } from '../../lib/types'
 import { getS3JSON } from '../../lib/utils'
 import { createPullRequestDescription } from './pr-description'
 
@@ -21,10 +21,12 @@ const ssmClient = new SSMClient({})
 const s3Client = new S3Client({})
 
 // A personal access token is used to clone and push from/to GitHub
-const gitHubUserCredentialsPromise = ssmClient.send(new GetParameterCommand({
-  Name: GIT_HUB_CREDENTIALS_SSM_PARAMETER,
-  WithDecryption: true
-}))
+const gitHubUserCredentialsPromise = ssmClient.send(
+  new GetParameterCommand({
+    Name: GIT_HUB_CREDENTIALS_SSM_PARAMETER,
+    WithDecryption: true,
+  }),
+)
 
 interface PullRequestEvent {
   transcriptKey: string
@@ -59,7 +61,9 @@ export const handleEvent = middify(async (event: PullRequestEvent) => {
     }
     const [username, password] = gitHubUserCredentials.split(':')
     if (username === undefined || password === undefined || username === '' || password === '') {
-      throw new Error(`${GIT_HUB_CREDENTIALS_SSM_PARAMETER} SSM Parameter should be in the format <Username>:<GitHubPersonalAccessToken>`)
+      throw new Error(
+        `${GIT_HUB_CREDENTIALS_SSM_PARAMETER} SSM Parameter should be in the format <Username>:<GitHubPersonalAccessToken>`,
+      )
     }
 
     const gitUrl = new URL(GIT_REPO_URL)
@@ -97,9 +101,14 @@ export const handleEvent = middify(async (event: PullRequestEvent) => {
     const base = TARGET_BRANCH === undefined ? 'main' : TARGET_BRANCH
     const repoPath = gitUrl.pathname
     const [, owner] = repoPath.split('/')
-    const response = await octokit.request(
-      `POST /repos/${owner}/${repoName}/pulls`, { owner, title, body, head, base, repo: repoName }
-    )
+    const response = await octokit.request(`POST /repos/${owner}/${repoName}/pulls`, {
+      owner,
+      title,
+      body,
+      head,
+      base,
+      repo: repoName,
+    })
     const prUrl = response.data.html_url
     console.log('Created PR', { prUrl })
     return { prUrl }

@@ -6,7 +6,7 @@ test('Dashboard Created', () => {
   const app = new cdk.App()
   const stack = new PriceMonitor.PriceMonitorStack(app, 'MyTestStack', {
     bedrockRegion: 'us-west-2',
-    modelId: 'anthropic.claude-v2'
+    modelId: 'anthropic.claude-v2',
   })
 
   const template = Template.fromStack(stack)

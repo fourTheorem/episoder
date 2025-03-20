@@ -1,12 +1,12 @@
 import path from 'node:path'
-import { S3Client } from '@aws-sdk/client-s3'
 import { MetricUnits } from '@aws-lambda-powertools/metrics'
+import { S3Client } from '@aws-sdk/client-s3'
 
 import envs from '../../lib/envs'
 import { logger, metrics, middify, tracer } from '../../lib/lambda-common'
-import { getS3JSON } from '../../lib/utils'
 import { createSummary } from '../../lib/summarisation'
-import { Summary, Transcript } from '../../lib/types'
+import type { Summary, Transcript } from '../../lib/types'
+import { getS3JSON } from '../../lib/utils'
 
 const { BUCKET_NAME } = envs
 
@@ -36,6 +36,6 @@ export const handleEvent = middify(async (event: SummarisationEvent): Promise<Su
   metrics.addMetric('ChapterCount', MetricUnits.Count, summary.chapters.length)
 
   return {
-    summary
+    summary,
   }
 })

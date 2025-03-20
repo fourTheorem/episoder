@@ -10,5 +10,5 @@ const bedrockRegion = app.node.tryGetContext('bedrockRegion') ?? 'us-east-1'
 new PriceMonitorStack(app, 'PriceMonitorStack', {
   env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: bedrockRegion },
   modelId: 'anthropic.claude-v2',
-  bedrockRegion: 'us-east-1'
+  bedrockRegion: 'us-east-1',
 })
