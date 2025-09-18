@@ -11,6 +11,9 @@ const context: Context = {
   logStreamName: '2021/07/15/[$LATEST]12345678901234567890',
   memoryLimitInMB: '128',
   getRemainingTimeInMillis: () => 1000000,
+  done: (): void => {},
+  fail: (): void => {},
+  succeed: (): void => {},
 }
 
 async function go() {
