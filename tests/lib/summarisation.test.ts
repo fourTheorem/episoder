@@ -37,7 +37,7 @@ const testTranscript = {
 }
 
 for (const bedrockRegion of [undefined, 'eu-central-1']) {
-  test('createSummary extracts summary from the LLM completion', async () => {
+  test('createSummary extracts summary from Claude 4 Messages content', async () => {
     const summary = {
       episodeSummary:
         'We discuss the options for publishing reusable AWS resources like Lambda functions. They cover approaches like GitHub, Serverless Application Repository, Terraform Modules, and more.',
@@ -56,26 +56,26 @@ for (const bedrockRegion of [undefined, 'eu-central-1']) {
       assert.ok(input.modelId)
       assert.ok(input.accept)
       assert.ok(input.contentType)
-      const parsedBody = JSON.parse(input.body)
-      const { prompt } = parsedBody
-      assert.match(prompt, /^Human: .*\n.*\n.*Assistant:\n$/s)
 
-      const completion = `
-      Here is the response. I hope you like it
-      
-      ${JSON.stringify(summary)}
+      const content = [
+        {
+          type: 'text',
+          text: `Here is the response. I hope you like it
 
-      Done!`
+${JSON.stringify(summary)}
+
+Done!`,
+        },
+      ]
+
       const body = Uint8ArrayBlobAdapter.fromString(
         JSON.stringify({
-          completion,
-          stop_reason: 'stop_sequence',
+          content,
+          stop_reason: 'end_turn',
         }),
       )
 
-      return {
-        body,
-      }
+      return { body }
     })
 
     const generatedSummary = await createSummary(testTranscript, { bedrockRegion })
