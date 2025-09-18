@@ -14,7 +14,8 @@
     "preserveConstEnums": true,
     "resolveJsonModule": true,
     "allowJs": false,
-    "rootDir": "."
+    "rootDir": ".",
+    "types": ["vitest/globals", "node"]
   },
   "exclude": ["node_modules"]
 }

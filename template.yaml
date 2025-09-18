@@ -116,7 +116,7 @@ Resources:
               Action:
                 - bedrock:InvokeModel
               Resource:
-                - !Sub 'arn:${AWS::Partition}:bedrock:${BedrockRegion}::foundation-model/anthropic.claude-v2'
+                - !Sub 'arn:${AWS::Partition}:bedrock:${BedrockRegion}::foundation-model/anthropic.claude-sonnet-4-20250514-v1:0'
       Architectures:
         - x86_64
     Metadata:

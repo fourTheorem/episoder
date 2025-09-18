@@ -3,7 +3,7 @@ import envs from './envs'
 import { createPrompt } from './prompt-template'
 import type { Summary, Transcript } from './types'
 
-const MODEL_ID = 'anthropic.claude-v2'
+const MODEL_ID = 'anthropic.claude-sonnet-4-20250514-v1:0'
 
 /**
  * Based on a Podwhisperer transcript, use the LLM to create an episode summary and chapters
