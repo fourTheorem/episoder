@@ -18,6 +18,7 @@ Parameters:
     Type: String
     AllowedValues:
       - us-east-1
+      - eu-west-1
       - us-west-1
       - eu-central-1
       - ap-northeast-1
@@ -116,7 +117,8 @@ Resources:
               Action:
                 - bedrock:InvokeModel
               Resource:
-                - !Sub 'arn:${AWS::Partition}:bedrock:${BedrockRegion}::foundation-model/anthropic.claude-v2'
+                - !Sub 'arn:${AWS::Partition}:bedrock:*::foundation-model/anthropic.claude*'
+                - !Sub 'arn:${AWS::Partition}:bedrock:*:${AWS::AccountId}:inference-profile/eu.anthropic.claude*'
       Architectures:
         - x86_64
     Metadata:
