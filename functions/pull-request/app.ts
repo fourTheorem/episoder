@@ -9,7 +9,7 @@ import { simpleGit } from 'simple-git'
 import envs from '../../lib/envs'
 import { logger, middify } from '../../lib/lambda-common'
 import type { Summary } from '../../lib/types'
-import { getS3JSON } from '../../lib/utils'
+import { getS3JSON, getS3Text } from '../../lib/utils'
 import { createPullRequestDescription } from './pr-description'
 
 const GIT_HUB_CREDENTIALS_SSM_PARAMETER = '/episoder/gitHubUserCredentials'
@@ -30,6 +30,7 @@ const gitHubUserCredentialsPromise = ssmClient.send(
 
 interface PullRequestEvent {
   transcriptKey: string
+  vttKey: string
   summary: Summary
 }
 
@@ -47,7 +48,9 @@ interface PullRequestEvent {
  */
 export const handleEvent = middify(async (event: PullRequestEvent) => {
   const transcript = await getS3JSON(s3Client, BUCKET_NAME, event.transcriptKey)
-  const id: string = path.basename(event.transcriptKey).split('.')[0]
+  const vttContent = await getS3Text(s3Client, BUCKET_NAME, event.vttKey)
+  // Extract episode number from filename, stripping _caption suffix (e.g., "150_caption.json" -> "150")
+  const id: string = path.basename(event.transcriptKey).replace('_caption.json', '')
 
   const tmpDir = await mkdtemp(path.join(tmpdir(), 'pr-'))
   logger.info('Using temporary directory', { tmpDir })
@@ -83,14 +86,20 @@ export const handleEvent = middify(async (event: PullRequestEvent) => {
     logger.info('Checking out new branch', { branchName })
     await git.cwd(path.resolve(tmpDir, repoName)).checkoutBranch(branchName, 'HEAD')
 
-    logger.info('Adding transcript', { branchName })
-    const newFilePath = path.join(tmpDir, repoName, 'src', '_transcripts', `${id}.json`)
-    await mkdir(path.dirname(newFilePath), { recursive: true })
-    await writeFile(newFilePath, JSON.stringify(transcript, null, '  '))
-    await git.add(newFilePath)
+    logger.info('Adding transcript and captions', { branchName })
+    const transcriptsDir = path.join(tmpDir, repoName, 'src', '_transcripts')
+    await mkdir(transcriptsDir, { recursive: true })
+
+    const jsonFilePath = path.join(transcriptsDir, `${id}.json`)
+    await writeFile(jsonFilePath, JSON.stringify(transcript, null, '  '))
+
+    const vttFilePath = path.join(transcriptsDir, `${id}.vtt`)
+    await writeFile(vttFilePath, vttContent)
+
+    await git.add([jsonFilePath, vttFilePath])
 
     logger.info('Committing and pushing')
-    const title = `add episode ${id} transcript`
+    const title = `add episode ${id} transcript and captions`
     await git.commit(`chore: ${title}`)
     await git.push('origin', branchName, ['--set-upstream'])
 

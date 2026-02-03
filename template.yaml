@@ -130,33 +130,26 @@ Resources:
         EntryPoints:
           - functions/summary/app.ts
 
-  TranscriptS3EventRule:
+  PodwhispererPipelineEventRule:
     Type: AWS::Events::Rule
     Properties:
       EventBusName: default
       EventPattern:
         source:
-          - aws.s3
+          - podwhisperer.pipeline
         detail-type:
-          - Object Created
-        detail:
-          bucket:
-            name:
-              - !Ref BucketName
-          object:
-            key:
-              - prefix: processed-transcripts/
-
+          - Pipeline Completed
       Targets:
         - Arn: !GetAtt EpisoderMachine.Arn
-          Id: s3-eventbridge-to-step-function
+          Id: podwhisperer-pipeline-to-step-function
           InputTransformer:
             InputPathsMap:
-              transcriptKey: $.detail.object.key
-            InputTemplate: '{"transcriptKey": "<transcriptKey>"}'
-          RoleArn: !GetAtt TranscriptS3EventRuleRole.Arn
+              captionsJson: $.detail.outputKeys.captions.json
+              captionsVtt: $.detail.outputKeys.captions.vtt
+            InputTemplate: '{"transcriptKey": "<captionsJson>", "vttKey": "<captionsVtt>"}'
+          RoleArn: !GetAtt PodwhispererPipelineEventRuleRole.Arn
 
-  TranscriptS3EventRuleRole:
+  PodwhispererPipelineEventRuleRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -169,7 +162,7 @@ Resources:
             Action:
               - sts:AssumeRole
       Policies:
-        - PolicyName: EpisoderRuleS3Access
+        - PolicyName: EpisoderRulePodwhispererAccess
           PolicyDocument:
             Version: 2012-10-17
             Statement:
