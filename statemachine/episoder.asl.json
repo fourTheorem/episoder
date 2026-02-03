@@ -37,6 +37,7 @@
         "FunctionName": "${PullRequestFunctionArn}",
         "Payload": {
           "transcriptKey.$": "$$.Execution.Input.transcriptKey",
+          "vttKey.$": "$$.Execution.Input.vttKey",
           "summary.$": "$.summary"
         }
       },
