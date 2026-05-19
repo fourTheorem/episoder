@@ -1,9 +1,34 @@
-import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime'
+import {
+  BedrockRuntimeClient,
+  InvokeModelCommand,
+  type InvokeModelCommandOutput,
+} from '@aws-sdk/client-bedrock-runtime'
 import envs from './envs'
 import { createPrompt } from './prompt-template'
 import type { Summary, Transcript } from './types'
 
-const MODEL_ID = 'eu.anthropic.claude-sonnet-4-20250514-v1:0'
+const MODEL_ID = 'eu.anthropic.claude-sonnet-4-6'
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message
+  return String(error)
+}
+
+function isLegacyModelAccessDenied(error: unknown): boolean {
+  const message = getErrorMessage(error)
+  return (
+    /access\s*denied/i.test(message) &&
+    /marked by provider as legacy/i.test(message) &&
+    /upgrade to an active model/i.test(message)
+  )
+}
+
+function createLegacyModelError(error: unknown): Error {
+  return new Error(
+    `Bedrock rejected the configured summary model because it is now legacy. Update the model ID to an active Bedrock inference profile, for example "${MODEL_ID}", and redeploy. Original Bedrock error: ${getErrorMessage(error)}`,
+    { cause: error },
+  )
+}
 
 /**
  * Based on a Podwhisperer transcript, use the LLM to create an episode summary and chapters
@@ -26,7 +51,6 @@ export async function createSummary(
     anthropic_version: 'bedrock-2023-05-31',
     max_tokens: 5000,
     temperature: 0.5,
-    top_p: 1,
     stop_sequences: [],
     messages: [
       {
@@ -48,7 +72,15 @@ export async function createSummary(
     contentType: 'application/json',
   })
 
-  const modelResponse = await brClient.send(invokeModelCommand)
+  let modelResponse: InvokeModelCommandOutput
+  try {
+    modelResponse = await brClient.send(invokeModelCommand)
+  } catch (error) {
+    if (isLegacyModelAccessDenied(error)) {
+      throw createLegacyModelError(error)
+    }
+    throw error
+  }
 
   const raw = await modelResponse.body.transformToString('utf8')
   const parsed = JSON.parse(raw) as {

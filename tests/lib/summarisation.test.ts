@@ -1,7 +1,7 @@
 import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime'
 import { Uint8ArrayBlobAdapter } from '@smithy/util-stream'
 import { mockClient } from 'aws-sdk-client-mock'
-import { assert, test } from 'vitest'
+import { assert, expect, test } from 'vitest'
 import { createSummary } from '../../lib/summarisation'
 
 const mockBedrockRuntime = mockClient(BedrockRuntimeClient)
@@ -56,6 +56,12 @@ for (const bedrockRegion of [undefined, 'eu-central-1']) {
       assert.ok(input.modelId)
       assert.ok(input.accept)
       assert.ok(input.contentType)
+      const requestBody = JSON.parse(String(input.body)) as {
+        temperature?: number
+        top_p?: number
+      }
+      assert.equal(requestBody.temperature, 0.5)
+      assert.equal(requestBody.top_p, undefined)
 
       const content = [
         {
@@ -80,5 +86,19 @@ Done!`,
 
     const generatedSummary = await createSummary(testTranscript, { bedrockRegion })
     assert.deepEqual(generatedSummary, summary)
+  })
+
+  test('createSummary surfaces a remediation hint for legacy Bedrock models', async () => {
+    mockBedrockRuntime
+      .on(InvokeModelCommand)
+      .rejects(
+        new Error(
+          'Access denied. This Model is marked by provider as Legacy and you have not been actively using the model in the last 30 days. Please upgrade to an active model on Amazon Bedrock',
+        ),
+      )
+
+    await expect(createSummary(testTranscript, { bedrockRegion })).rejects.toThrow(
+      'Update the model ID to an active Bedrock inference profile, for example "eu.anthropic.claude-sonnet-4-6"',
+    )
   })
 }
